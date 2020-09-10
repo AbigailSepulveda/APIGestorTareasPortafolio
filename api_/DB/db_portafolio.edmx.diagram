@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="6afae00896ea4402aeca36963382c893" Name="Diagram1">
+        <EntityTypeShape EntityType="db_model.alerts" Width="1.5" PointX="13.5" PointY="22.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.config_devices" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.config_traffic_lights" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.enterprises" Width="1.5" PointX="3.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.files" Width="1.5" PointX="10.5" PointY="24" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.log_assing_task" Width="1.5" PointX="10.5" PointY="16.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.log_task" Width="1.5" PointX="13.5" PointY="16.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.messages" Width="1.5" PointX="10.5" PointY="12.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.modules" Width="1.5" PointX="0.75" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.roles" Width="1.5" PointX="0.75" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.roles_modules" Width="1.5" PointX="3" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.task_statuses" Width="1.5" PointX="11.25" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.tasks" Width="1.5" PointX="8.25" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.tasks_relations" Width="1.5" PointX="10.5" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.templates" Width="1.5" PointX="0.875" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.templates_tasks" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.types_alerts" Width="1.5" PointX="11.25" PointY="20.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.units" Width="1.5" PointX="3.75" PointY="15.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="db_model.users" Width="1.5" PointX="6" PointY="10.875" IsExpanded="true" />
+        <AssociationConnector Association="db_model.fk_a_task_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_a_type_alert_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_u_enterprise_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_f_task_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_lat_task_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_lat_user_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_lt_task_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_lt_task_status_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_lt_user_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_m_task_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_m_user_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_rm_module_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_rm_rol_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_u_rol_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_t_user_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_tr_first_task_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_tr_second_task_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_tt_template_id" ManuallyRouted="false" />
+        <AssociationConnector Association="db_model.fk_u_unit_id" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
