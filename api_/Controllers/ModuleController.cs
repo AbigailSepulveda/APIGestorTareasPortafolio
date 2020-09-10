@@ -35,9 +35,9 @@ namespace api_.Controllers {
 
         [Route("update")]
         [HttpPost]
-        public HttpResponseMessage update([FromBody] decimal id, [FromBody] String name) {
+        public HttpResponseMessage update([FromBody] decimal id, [FromBody] String name, int state) {
             try {
-                ModuleDomain.update(id, name);
+                ModuleDomain.update(id, name, state);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, "Error: " + e.Message.ToString());
