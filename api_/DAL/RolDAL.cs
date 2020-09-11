@@ -38,7 +38,7 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(Int32 id, String name, List<modules> modules) {
+        public static void update(decimal id, String name, List<modules> modules) {
             using (var conn = new db()) {
                 try {
                     var entity = conn.roles.Where(x => x.id == id).FirstOrDefault();

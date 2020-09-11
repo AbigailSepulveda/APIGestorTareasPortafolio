@@ -1,4 +1,5 @@
 ﻿using api_.DAL;
+using api_.DB;
 using api_.Models;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,14 @@ namespace api_.Domain {
          */
         public static void insert(String name, List<Module> modules) {
             try {
-                //RolDAL.insert(name);
+                var now = new DateTime();
+                var dalModules = modules.Select(x => new modules() {
+                    name = x.name,
+                    state = x.state,
+                    created_at = now
+                }).ToList();
+
+                RolDAL.insert(name, dalModules);
             } catch (Exception e) {
                 throw e;
             }
@@ -46,7 +54,15 @@ namespace api_.Domain {
          */
         public static void update(decimal id, String name, List<Module> modules) {
             try {
-                //RolDAL.update(id, name, state);
+                var now = new DateTime();
+                var dalModules = modules.Select(x => new modules() {
+                    name = x.name,
+                    state = x.state,
+                    created_at = now,
+                    updated_at = now
+                }).ToList();
+
+                RolDAL.update(id, name, dalModules);
             } catch (Exception e) {
                 throw e;
             }
