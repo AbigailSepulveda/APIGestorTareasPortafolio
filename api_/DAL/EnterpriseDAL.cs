@@ -11,6 +11,21 @@ namespace api_.DAL {
         }
 
         /**
+         * Método para validar si existe el registro
+         * @return true si existe
+         */
+        public static bool exists(String name) {
+            using (var conn = new db()) {
+                try {
+                    var result = conn.enterprises.Where(x => x.name.Equals(name)).FirstOrDefault();
+                    return result != null;
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
+
+        /**
          * Método para crear nuevo registro
          */
         public static void insert(String name) {

@@ -27,17 +27,6 @@ namespace api_.Domain {
         }
 
         /**
-         * Método para crear un nuevo registro
-         */
-        public void insert(decimal green, decimal yellow, decimal red) {
-            try {
-                ConfigTrafficLightDAL.insert(green, yellow, red);
-            } catch (Exception e) {
-                throw e;
-            }
-        }
-
-        /**
          * Método para actualizar un nuevo registro
          */
         public void update(decimal id, decimal green, decimal yellow, decimal red) {

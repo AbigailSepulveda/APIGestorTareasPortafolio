@@ -16,7 +16,7 @@ namespace api_.Controllers {
             try {
                 return response(HttpStatusCode.OK, true, "ready", UnitDomain.fetchAll());
             } catch (Exception e) {
-                return response(HttpStatusCode.OK, false, "Error: " + e.Message.ToString());
+                return response(HttpStatusCode.OK, false, e);
             }
         }
 
@@ -27,7 +27,7 @@ namespace api_.Controllers {
                 UnitDomain.insert(name);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
-                return response(HttpStatusCode.OK, false, "Error: " + e.Message.ToString());
+                return response(HttpStatusCode.OK, false, e);
             }
         }
 
@@ -38,7 +38,7 @@ namespace api_.Controllers {
                 UnitDomain.update(id, name, state);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
-                return response(HttpStatusCode.OK, false, "Error: " + e.Message.ToString());
+                return response(HttpStatusCode.OK, false, e);
             }
         }
     }

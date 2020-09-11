@@ -169,6 +169,7 @@
     <Compile Include="Controllers\EnterpriseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TaskStatusController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\TypeAlertController.cs" />
     <Compile Include="DAL\ConfigTrafficLightDAL.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="DAL\RolDAL.cs" />
     <Compile Include="DAL\TaskStatusDAL.cs" />
     <Compile Include="DAL\TypeAlertDAL.cs" />
+    <Compile Include="DAL\UserDAL.cs" />
     <Compile Include="DAL\UnitDAL.cs" />
     <Compile Include="DB\alerts.cs">
       <DependentUpon>db_portafolio.tt</DependentUpon>
@@ -256,7 +258,10 @@
     <Compile Include="Domain\RolDomain.cs" />
     <Compile Include="Domain\TaskStatusDomain.cs" />
     <Compile Include="Domain\TypeAlertDomain.cs" />
+    <Compile Include="Domain\UserDomain.cs" />
     <Compile Include="Domain\UnitDomain.cs" />
+    <Compile Include="Exceptions\ExistsException.cs" />
+    <Compile Include="Exceptions\AuthenticationException.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -267,6 +272,8 @@
     <Compile Include="Models\TaskStatus.cs" />
     <Compile Include="Models\TypeAlert.cs" />
     <Compile Include="Models\Unit.cs" />
+    <Compile Include="Models\UserLogin.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

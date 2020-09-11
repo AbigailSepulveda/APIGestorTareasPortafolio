@@ -18,14 +18,24 @@ namespace api_.Controllers {
             return Request.CreateResponse(status, result);
         }
 
-        /**
-         * Método para responser en caso de no enviar un objeto en data y solo la estructura estandar
-         */
         protected HttpResponseMessage response(HttpStatusCode status, bool success,
             string message) {
             var result = new {
                 success,
                 message,
+                data = new Object()
+            };
+            return Request.CreateResponse(status, result);
+        }
+
+        /**
+         * Método para responser en caso de no enviar un objeto en data y solo la estructura estandar
+         */
+        protected HttpResponseMessage response(HttpStatusCode status, bool success,
+            Exception exception) {
+            var result = new {
+                success,
+                message = "Error: " + exception.Message.ToString(),
                 data = new Object()
             };
             return Request.CreateResponse(status, result);

@@ -1,4 +1,5 @@
 ﻿using api_.DAL;
+using api_.Exceptions;
 using api_.Models;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,11 @@ namespace api_.Domain {
          */
         public static void insert(String name) {
             try {
-                EnterpriseDAL.insert(name);
+                if (EnterpriseDAL.exists(name)) {
+                    throw new ExistsException();
+                } else {
+                    EnterpriseDAL.insert(name);
+                }
             } catch (Exception e) {
                 throw e;
             }

@@ -1,5 +1,6 @@
 ﻿using api_.DAL;
 using api_.DB;
+using api_.Exceptions;
 using api_.Models;
 using System;
 using System.Collections.Generic;
@@ -36,14 +37,18 @@ namespace api_.Domain {
          */
         public static void insert(String name, List<Module> modules) {
             try {
-                var now = new DateTime();
-                var dalModules = modules.Select(x => new modules() {
-                    name = x.name,
-                    state = x.state,
-                    created_at = now
-                }).ToList();
+                if (RolDAL.exists(name)) {
+                    throw new ExistsException();
+                } else {
+                    var now = new DateTime();
+                    var dalModules = modules.Select(x => new modules() {
+                        name = x.name,
+                        state = x.state,
+                        created_at = now
+                    }).ToList();
 
-                RolDAL.insert(name, dalModules);
+                    RolDAL.insert(name, dalModules);
+                }
             } catch (Exception e) {
                 throw e;
             }

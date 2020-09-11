@@ -10,26 +10,6 @@ namespace api_.DAL {
         }
 
         /**
-         * Método para crear nuevo registro
-         */
-        public static void insert(decimal green, decimal yellow, decimal red) {
-            using (var conn = new db()) {
-                try {
-                    config_traffic_lights entity = new config_traffic_lights();
-                    entity.green = green;
-                    entity.yellow = yellow;
-                    entity.red = red;
-                    entity.created_at = new DateTime();
-                    entity.state = 1;
-                    conn.config_traffic_lights.Add(entity);
-                    conn.SaveChanges();
-                } catch (Exception e) {
-                    throw e;
-                }
-            }
-        }
-
-        /**
          * Método para actualizar el registro
          */
         public static void update(decimal id, decimal green, decimal yellow, decimal red) {

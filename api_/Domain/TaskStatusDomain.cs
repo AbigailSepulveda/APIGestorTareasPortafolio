@@ -1,4 +1,5 @@
 ﻿using api_.DAL;
+using api_.Exceptions;
 using api_.Models;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,11 @@ namespace api_.Domain {
          */
         public static void insert(String code, String name) {
             try {
-                TaskStatusDAL.insert(code, name);
+                if (TaskStatusDAL.exists(code, name)) {
+                    throw new ExistsException();
+                } else {
+                    TaskStatusDAL.insert(code, name);
+                }
             } catch (Exception e) {
                 throw e;
             }
