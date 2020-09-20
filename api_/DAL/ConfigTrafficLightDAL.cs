@@ -12,14 +12,14 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, decimal green, decimal yellow, decimal red) {
+        public static void update(long id, int green, int yellow, int red) {
             using (var conn = new db()) {
                 try {
                     var entity = conn.config_traffic_lights.Where(x => x.id == id).FirstOrDefault();
                     entity.green = green;
                     entity.yellow = yellow;
                     entity.red = red;
-                    entity.updated_at = new DateTime();
+                    entity.updated_at = DateTime.Now;
                     conn.SaveChanges();
                 } catch (Exception e) {
                     throw e;

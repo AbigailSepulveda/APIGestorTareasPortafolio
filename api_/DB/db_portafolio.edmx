@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="db_model.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="18.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="db_model.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="18.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="alerts">
           <Key>
             <PropertyRef Name="id" />
@@ -115,6 +115,7 @@
           <Property Name="name" Type="varchar2" MaxLength="250" />
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
+          <Property Name="state" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="roles_modules">
           <Key>
@@ -200,6 +201,7 @@
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
           <Property Name="state" Type="number" Precision="38" Scale="0" />
+          <Property Name="boss" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="users">
           <Key>
@@ -409,6 +411,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_u_boss">
+          <End Role="users" Type="Self.users" Multiplicity="0..1" />
+          <End Role="units" Type="Self.units" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="units">
+              <PropertyRef Name="boss" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_u_enterprise_id">
           <End Role="enterprises" Type="Self.enterprises" Multiplicity="0..1" />
           <End Role="users" Type="Self.users" Multiplicity="*" />
@@ -529,6 +543,10 @@
             <End Role="templates" EntitySet="templates" />
             <End Role="templates_tasks" EntitySet="templates_tasks" />
           </AssociationSet>
+          <AssociationSet Name="fk_u_boss" Association="Self.fk_u_boss">
+            <End Role="users" EntitySet="users" />
+            <End Role="units" EntitySet="units" />
+          </AssociationSet>
           <AssociationSet Name="fk_u_enterprise_id" Association="Self.fk_u_enterprise_id">
             <End Role="enterprises" EntitySet="enterprises" />
             <End Role="users" EntitySet="users" />
@@ -542,8 +560,7 @@
             <End Role="users" EntitySet="users" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="db_model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -650,17 +667,6 @@
           <NavigationProperty Name="tasks" Relationship="Self.fk_m_task_id" FromRole="messages" ToRole="tasks" />
           <NavigationProperty Name="users" Relationship="Self.fk_m_user_id" FromRole="messages" ToRole="users" />
         </EntityType>
-        <EntityType Name="modules">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="created_at" Type="DateTime" Precision="6" />
-          <Property Name="updated_at" Type="DateTime" Precision="6" />
-          <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="roles_modules" Relationship="Self.fk_rm_module_id" FromRole="modules" ToRole="roles_modules" />
-        </EntityType>
         <EntityType Name="roles">
           <Key>
             <PropertyRef Name="id" />
@@ -671,6 +677,7 @@
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <NavigationProperty Name="roles_modules" Relationship="Self.fk_rm_rol_id" FromRole="roles" ToRole="roles_modules" />
           <NavigationProperty Name="users" Relationship="Self.fk_u_rol_id" FromRole="roles" ToRole="users" />
+          <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="roles_modules">
           <Key>
@@ -679,8 +686,8 @@
           <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="rol_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
           <Property Name="module_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <NavigationProperty Name="modules" Relationship="Self.fk_rm_module_id" FromRole="roles_modules" ToRole="modules" />
           <NavigationProperty Name="roles" Relationship="Self.fk_rm_rol_id" FromRole="roles_modules" ToRole="roles" />
+          <NavigationProperty Name="modules" Relationship="db_model.fk_rm_module_id" FromRole="roles_modules" ToRole="modules" />
         </EntityType>
         <EntityType Name="task_statuses">
           <Key>
@@ -773,6 +780,8 @@
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
           <NavigationProperty Name="users" Relationship="Self.fk_u_unit_id" FromRole="units" ToRole="users" />
+          <Property Name="boss" Type="Decimal" Precision="38" Scale="0" />
+          <NavigationProperty Name="users1" Relationship="db_model.fk_u_boss" FromRole="units" ToRole="users" />
         </EntityType>
         <EntityType Name="users">
           <Key>
@@ -796,6 +805,7 @@
           <NavigationProperty Name="roles" Relationship="Self.fk_u_rol_id" FromRole="users" ToRole="roles" />
           <NavigationProperty Name="tasks" Relationship="Self.fk_t_user_id" FromRole="users" ToRole="tasks" />
           <NavigationProperty Name="units" Relationship="Self.fk_u_unit_id" FromRole="users" ToRole="units" />
+          <NavigationProperty Name="units1" Relationship="db_model.fk_u_boss" FromRole="users" ToRole="units" />
         </EntityType>
         <Association Name="fk_a_task_id">
           <End Role="tasks" Type="Self.tasks" Multiplicity="0..1" />
@@ -929,18 +939,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="fk_rm_module_id">
-          <End Role="modules" Type="Self.modules" Multiplicity="1" />
-          <End Role="roles_modules" Type="Self.roles_modules" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="modules">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="roles_modules">
-              <PropertyRef Name="module_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="fk_rm_rol_id">
           <End Role="roles" Type="Self.roles" Multiplicity="1" />
           <End Role="roles_modules" Type="Self.roles_modules" Multiplicity="*" />
@@ -1034,7 +1032,6 @@
           <EntitySet Name="log_assing_task" EntityType="Self.log_assing_task" />
           <EntitySet Name="log_task" EntityType="Self.log_task" />
           <EntitySet Name="messages" EntityType="Self.messages" />
-          <EntitySet Name="modules" EntityType="Self.modules" />
           <EntitySet Name="roles" EntityType="Self.roles" />
           <EntitySet Name="roles_modules" EntityType="Self.roles_modules" />
           <EntitySet Name="task_statuses" EntityType="Self.task_statuses" />
@@ -1089,10 +1086,6 @@
             <End Role="users" EntitySet="users" />
             <End Role="messages" EntitySet="messages" />
           </AssociationSet>
-          <AssociationSet Name="fk_rm_module_id" Association="Self.fk_rm_module_id">
-            <End Role="modules" EntitySet="modules" />
-            <End Role="roles_modules" EntitySet="roles_modules" />
-          </AssociationSet>
           <AssociationSet Name="fk_rm_rol_id" Association="Self.fk_rm_rol_id">
             <End Role="roles" EntitySet="roles" />
             <End Role="roles_modules" EntitySet="roles_modules" />
@@ -1121,7 +1114,51 @@
             <End Role="units" EntitySet="units" />
             <End Role="users" EntitySet="users" />
           </AssociationSet>
+          <EntitySet Name="modules" EntityType="db_model.modules" />
+          <AssociationSet Name="fk_rm_module_id" Association="db_model.fk_rm_module_id">
+            <End Role="modules" EntitySet="modules" />
+            <End Role="roles_modules" EntitySet="roles_modules" />
+          </AssociationSet>
+          <AssociationSet Name="fk_u_boss" Association="db_model.fk_u_boss">
+            <End Role="users" EntitySet="users" />
+            <End Role="units" EntitySet="units" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="modules">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="created_at" Type="DateTime" Precision="6" />
+          <Property Name="updated_at" Type="DateTime" Precision="6" />
+          <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
+          <NavigationProperty Name="roles_modules" Relationship="db_model.fk_rm_module_id" FromRole="modules" ToRole="roles_modules" />
+        </EntityType>
+        <Association Name="fk_rm_module_id">
+          <End Type="db_model.modules" Role="modules" Multiplicity="1" />
+          <End Type="db_model.roles_modules" Role="roles_modules" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="modules">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="roles_modules">
+              <PropertyRef Name="module_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_u_boss">
+          <End Type="db_model.users" Role="users" Multiplicity="0..1" />
+          <End Type="db_model.units" Role="units" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="users">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="units">
+              <PropertyRef Name="boss" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1228,20 +1265,10 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="modules">
-            <EntityTypeMapping TypeName="db_model.modules">
-              <MappingFragment StoreEntitySet="modules">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="state" ColumnName="state" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="roles">
             <EntityTypeMapping TypeName="db_model.roles">
               <MappingFragment StoreEntitySet="roles">
+                <ScalarProperty Name="state" ColumnName="state" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="created_at" ColumnName="created_at" />
@@ -1334,6 +1361,7 @@
           <EntitySetMapping Name="units">
             <EntityTypeMapping TypeName="db_model.units">
               <MappingFragment StoreEntitySet="units">
+                <ScalarProperty Name="boss" ColumnName="boss" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="created_at" ColumnName="created_at" />
@@ -1356,6 +1384,17 @@
                 <ScalarProperty Name="state" ColumnName="state" />
                 <ScalarProperty Name="token_session" ColumnName="token_session" />
                 <ScalarProperty Name="enterprise_id" ColumnName="enterprise_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="modules">
+            <EntityTypeMapping TypeName="db_model.modules">
+              <MappingFragment StoreEntitySet="modules">
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

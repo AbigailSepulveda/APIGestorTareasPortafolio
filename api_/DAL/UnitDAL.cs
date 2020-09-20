@@ -33,7 +33,7 @@ namespace api_.DAL {
                 try {
                     units entity = new units();
                     entity.name = name;
-                    entity.created_at = new DateTime();
+                    entity.created_at = DateTime.Now;
                     entity.state = 1;
                     conn.units.Add(entity);
                     conn.SaveChanges();
@@ -46,13 +46,13 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name, int state) {
+        public static void update(decimal id, String name, decimal? state) {
             using (var conn = new db()) {
                 try {
                     var entity = conn.units.Where(x => x.id == id).FirstOrDefault();
                     entity.name = name;
                     entity.state = state;
-                    entity.updated_at = new DateTime();
+                    entity.updated_at = DateTime.Now;
                     conn.SaveChanges();
                 } catch (Exception e) {
                     throw e;

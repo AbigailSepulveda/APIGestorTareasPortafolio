@@ -12,14 +12,14 @@ namespace api_.Domain {
         /**
          * Método para obtener los datos realizando el mapeo desde la capa de datos
          */
-        public ConfigTrafficLight fetch() {
+        public static ConfigTrafficLight fetch() {
             try {
                 var result = ConfigTrafficLightDAL.fetch();
                 ConfigTrafficLight entity = new ConfigTrafficLight();
-                entity.id = result.id;
-                entity.green = result.green;
-                entity.yellow = result.yellow;
-                entity.red = result.red;
+                entity.id = long.Parse(result.id + "");
+                entity.green = int.Parse(result.green + "");
+                entity.yellow = int.Parse(result.yellow + "");
+                entity.red = int.Parse(result.red + "");
                 return entity;
             } catch (Exception e) {
                 throw e;
@@ -29,7 +29,7 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public void update(decimal id, decimal green, decimal yellow, decimal red) {
+        public static void update(long id, int green, int yellow, int red) {
             try {
                 ConfigTrafficLightDAL.update(id, green, yellow, red);
             } catch (Exception e) {

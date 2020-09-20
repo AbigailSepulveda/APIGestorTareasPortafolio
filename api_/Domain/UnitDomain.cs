@@ -18,9 +18,9 @@ namespace api_.Domain {
         public static List<Unit> fetchAll() {
             try {
                 return UnitDAL.fetchAll().Select(x => new Unit {
-                    id = x.id,
+                    id = long.Parse(x.id + ""),
                     name = x.name,
-                    state = x.state
+                    state = int.Parse(x.state + "")
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -45,7 +45,7 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(decimal id, String name, int state) {
+        public static void update(decimal id, String name, decimal? state) {
             try {
                 UnitDAL.update(id, name, state);
             } catch (Exception e) {

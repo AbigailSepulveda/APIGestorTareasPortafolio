@@ -1,4 +1,5 @@
 ﻿using api_.Domain;
+using api_.Models;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -22,9 +23,9 @@ namespace api_.Controllers {
 
         [Route("insert")]
         [HttpPost]
-        public HttpResponseMessage insert([FromBody] String name) {
+        public HttpResponseMessage insert(TypeAlert typeAlert) {
             try {
-                TypeAlertDomain.insert(name);
+                TypeAlertDomain.insert(typeAlert.name);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);
@@ -33,9 +34,9 @@ namespace api_.Controllers {
 
         [Route("update")]
         [HttpPost]
-        public HttpResponseMessage update([FromBody] decimal id, [FromBody] String name, [FromBody]int state) {
+        public HttpResponseMessage update(TypeAlert typeAlert) {
             try {
-                TypeAlertDomain.update(id, name, state);
+                TypeAlertDomain.update(typeAlert.id, typeAlert.name, typeAlert.state);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);

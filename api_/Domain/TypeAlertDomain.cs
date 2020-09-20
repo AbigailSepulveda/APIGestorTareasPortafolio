@@ -20,9 +20,9 @@ namespace api_.Domain {
                 return TypeAlertDAL
                     .fetchAll()
                     .Select(x => new TypeAlert {
-                        id = x.id,
+                        id = long.Parse(x.id + ""),
                         name = x.name,
-                        state = x.state
+                        state = int.Parse(x.state + "")
                     })
                     .ToList();
             } catch (Exception e) {
@@ -48,7 +48,7 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(decimal id, String name, int state) {
+        public static void update(long id, String name, int state) {
             try {
                 TypeAlertDAL.update(id, name, state);
             } catch (Exception e) {

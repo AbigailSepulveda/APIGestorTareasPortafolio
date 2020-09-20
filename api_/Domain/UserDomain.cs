@@ -19,15 +19,15 @@ namespace api_.Domain {
         public static List<User> fetchAll() {
             try {
                 return UserDAL.fetchAll().Select(x => new User {
-                    id = x.id,
+                    id = long.Parse(x.id + ""),
                     name = x.name,
                     email = x.email,
                     password = x.password,
-                    rol_id = x.rol_id,
-                    unit_id = x.unit_id,
-                    state = x.state,
+                    rol_id = long.Parse(x.rol_id + ""),
+                    unit_id = long.Parse(x.unit_id + ""),
+                    state = int.Parse(x.state + ""),
                     token_session = x.token_session,
-                    enterprise_id = x.enterprise_id
+                    enterprise_id = long.Parse(x.enterprise_id + "")
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -84,14 +84,14 @@ namespace api_.Domain {
                 String token = randomString();
                 var x = UserDAL.signIn(email, password, token);
                 UserLogin user = new UserLogin();
-                user.id = x.id;
+                user.id = long.Parse(x.id + "");
                 user.name = x.name;
                 user.email = x.email;
-                user.rol = new Rol() { id = x.roles.id, name = x.roles.name };
-                user.unit = new Unit() { id = x.units.id, name = x.units.name };
-                user.state = x.state;
+                user.rol = new Rol() { id = long.Parse(x.roles.id + ""), name = x.roles.name };
+                user.unit = new Unit() { id = long.Parse(x.units.id + ""), name = x.units.name };
+                user.state = int.Parse(x.state + "");
                 user.token_session = x.token_session;
-                user.enterprise = new Enterprise() { id = x.enterprises.id, name = x.enterprises.name };
+                user.enterprise = new Enterprise() { id = long.Parse(x.enterprises.id + ""), name = x.enterprises.name };
                 return user;
             } catch (Exception e) {
                 throw e;

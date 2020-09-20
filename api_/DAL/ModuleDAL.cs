@@ -33,7 +33,7 @@ namespace api_.DAL {
                 try {
                     modules entity = new modules();
                     entity.name = name;
-                    entity.created_at = new DateTime();
+                    entity.created_at = DateTime.Now;
                     entity.state = 1;
                     conn.modules.Add(entity);
                     conn.SaveChanges();
@@ -52,7 +52,7 @@ namespace api_.DAL {
                     var entity = conn.modules.Where(x => x.id == id).FirstOrDefault();
                     entity.name = name;
                     entity.state = state;
-                    entity.updated_at = new DateTime();
+                    entity.updated_at = DateTime.Now;
                     conn.SaveChanges();
                 } catch (Exception e) {
                     throw e;

@@ -18,10 +18,10 @@ namespace api_.Domain {
         public static List<TaskStatus> fetchAll() {
             try {
                 return TaskStatusDAL.fetchAll().Select(x => new TaskStatus {
-                    id = x.id,
+                    id = long.Parse(x.id + ""),
                     code = x.code,
                     name = x.name,
-                    state = x.state
+                    state = int.Parse(x.state + "")
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -46,7 +46,7 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(decimal id, String code, String name, int state) {
+        public static void update(long id, String code, String name, int state) {
             try {
                 TaskStatusDAL.update(id, code, name, state);
             } catch (Exception e) {

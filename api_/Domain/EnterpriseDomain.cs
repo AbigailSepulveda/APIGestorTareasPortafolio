@@ -17,8 +17,8 @@ namespace api_.Domain {
          */
         public static List<Enterprise> fetchAll() {
             try {
-                return EnterpriseDAL.fetchAll().Select(x => new Enterprise{
-                    id = x.id,
+                return EnterpriseDAL.fetchAll().Select(x => new Enterprise {
+                    id = int.Parse(x.id + ""),
                     name = x.name,
                 }).ToList();
             } catch (Exception e) {
@@ -44,7 +44,7 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(decimal id, String name) {
+        public static void update(long id, String name) {
             try {
                 EnterpriseDAL.update(id, name);
             } catch (Exception e) {

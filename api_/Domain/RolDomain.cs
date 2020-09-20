@@ -18,15 +18,31 @@ namespace api_.Domain {
          */
         public static List<Rol> fetchAll() {
             try {
-                return RolDAL.fetchAll().Select(x => new Rol {
-                    id = x.id,
-                    name = x.name,
-                    modules = x.roles_modules.Where(z => z.rol_id == x.id).ToList().Select(y => new Module {
-                        id = y.modules.id,
-                        name = y.modules.name,
+                List<Rol> rolesDomain = new List<Rol>();
+                var rolesList = RolDAL.fetchAll();
 
-                    }).ToList()
-                }).ToList();
+                foreach (roles item in rolesList) {
+                    Rol rol = new Rol();
+                    rol.id = long.Parse(item.id + "");
+                    rol.name = item.name;
+                    rol.state = int.Parse(item.state + "");
+                    List<Module> modulesDomain = new List<Module>();
+
+                    var modules = RolModuleDAL.fetchAll().Where(x => x.rol_id == item.id).ToList();
+                    foreach (roles_modules rm in modules) {
+                        var md = ModuleDAL.fetchAll().Where(x => x.id == rm.module_id).Select(y =>
+                           new Module() {
+                               id = long.Parse(y.id + ""),
+                               name = y.name,
+                               state = int.Parse(y.state + "")
+                           }).FirstOrDefault();
+                        modulesDomain.Add(md);
+                    }
+                    rol.modules = modulesDomain;
+
+                    rolesDomain.Add(rol);
+                }
+                return rolesDomain;
             } catch (Exception e) {
                 throw e;
             }
@@ -35,19 +51,12 @@ namespace api_.Domain {
         /**
          * Método para crear un nuevo registro
          */
-        public static void insert(String name, List<Module> modules) {
+        public static void insert(String name, List<long> modules) {
             try {
                 if (RolDAL.exists(name)) {
                     throw new ExistsException();
                 } else {
-                    var now = new DateTime();
-                    var dalModules = modules.Select(x => new modules() {
-                        name = x.name,
-                        state = x.state,
-                        created_at = now
-                    }).ToList();
-
-                    RolDAL.insert(name, dalModules);
+                    RolDAL.insert(name, modules);
                 }
             } catch (Exception e) {
                 throw e;
@@ -57,17 +66,9 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(decimal id, String name, List<Module> modules) {
+        public static void update(long id, String name, List<long> modules) {
             try {
-                var now = new DateTime();
-                var dalModules = modules.Select(x => new modules() {
-                    name = x.name,
-                    state = x.state,
-                    created_at = now,
-                    updated_at = now
-                }).ToList();
-
-                RolDAL.update(id, name, dalModules);
+                RolDAL.update(id, name, modules);
             } catch (Exception e) {
                 throw e;
             }

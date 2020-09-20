@@ -1,5 +1,6 @@
 ﻿using api_.Domain;
 using api_.Models;
+using api_.Request;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -26,9 +27,9 @@ namespace api_.Controllers {
 
         [Route("insert")]
         [HttpPost]
-        public HttpResponseMessage insert([FromBody] String name, [FromBody] List<Module> modules) {
+        public HttpResponseMessage insert(RolInsertRequest request) {
             try {
-                RolDomain.insert(name, modules);
+                RolDomain.insert(request.name, request.modules);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);
@@ -37,9 +38,9 @@ namespace api_.Controllers {
 
         [Route("update")]
         [HttpPost]
-        public HttpResponseMessage update([FromBody] decimal id, [FromBody] String name, [FromBody] List<Module> modules) {
+        public HttpResponseMessage update(Rol rol, List<long> modules) {
             try {
-                RolDomain.update(id, name, modules);
+                RolDomain.update(rol.id, rol.name, modules);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);

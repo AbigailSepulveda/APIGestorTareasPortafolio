@@ -34,7 +34,7 @@ namespace api_.DAL {
                     types_alerts entity = new types_alerts();
                     entity.name = name;
                     entity.state = 1;
-                    entity.created_at = new DateTime();
+                    entity.created_at = DateTime.Now;
                     conn.types_alerts.Add(entity);
                     conn.SaveChanges();
                 } catch (Exception e) {
@@ -52,7 +52,7 @@ namespace api_.DAL {
                     var entity = conn.types_alerts.Where(x => x.id == id).FirstOrDefault();
                     entity.name = name;
                     entity.state = state;
-                    entity.updated_at = new DateTime();
+                    entity.updated_at = DateTime.Now;
                     conn.SaveChanges();
                 } catch (Exception e) {
                     throw e;

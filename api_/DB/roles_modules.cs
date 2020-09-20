@@ -18,7 +18,7 @@ namespace api_.DB
         public decimal rol_id { get; set; }
         public decimal module_id { get; set; }
     
-        public virtual modules modules { get; set; }
         public virtual roles roles { get; set; }
+        public virtual modules modules { get; set; }
     }
 }

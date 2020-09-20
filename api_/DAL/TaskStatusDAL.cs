@@ -34,7 +34,7 @@ namespace api_.DAL {
                     task_statuses entity = new task_statuses();
                     entity.code = code;
                     entity.name = name;
-                    entity.created_at = new DateTime();
+                    entity.created_at = DateTime.Now;
                     entity.state = 1;
                     conn.task_statuses.Add(entity);
                     conn.SaveChanges();
@@ -54,7 +54,7 @@ namespace api_.DAL {
                     entity.code = code;
                     entity.name = name;
                     entity.state = state;
-                    entity.updated_at = new DateTime();
+                    entity.updated_at = DateTime.Now;
                     conn.SaveChanges();
                 } catch (Exception e) {
                     throw e;

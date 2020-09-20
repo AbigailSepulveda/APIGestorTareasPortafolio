@@ -13,7 +13,6 @@
         <EntityTypeShape EntityType="db_model.log_assing_task" Width="1.5" PointX="10.5" PointY="16.875" IsExpanded="true" />
         <EntityTypeShape EntityType="db_model.log_task" Width="1.5" PointX="13.5" PointY="16.875" IsExpanded="true" />
         <EntityTypeShape EntityType="db_model.messages" Width="1.5" PointX="10.5" PointY="12.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="db_model.modules" Width="1.5" PointX="0.75" PointY="9" IsExpanded="true" />
         <EntityTypeShape EntityType="db_model.roles" Width="1.5" PointX="0.75" PointY="12" IsExpanded="true" />
         <EntityTypeShape EntityType="db_model.roles_modules" Width="1.5" PointX="3" PointY="12.125" IsExpanded="true" />
         <EntityTypeShape EntityType="db_model.task_statuses" Width="1.5" PointX="11.25" PointY="9.125" IsExpanded="true" />
@@ -35,7 +34,6 @@
         <AssociationConnector Association="db_model.fk_lt_user_id" ManuallyRouted="false" />
         <AssociationConnector Association="db_model.fk_m_task_id" ManuallyRouted="false" />
         <AssociationConnector Association="db_model.fk_m_user_id" ManuallyRouted="false" />
-        <AssociationConnector Association="db_model.fk_rm_module_id" ManuallyRouted="false" />
         <AssociationConnector Association="db_model.fk_rm_rol_id" ManuallyRouted="false" />
         <AssociationConnector Association="db_model.fk_u_rol_id" ManuallyRouted="false" />
         <AssociationConnector Association="db_model.fk_t_user_id" ManuallyRouted="false" />
@@ -43,6 +41,9 @@
         <AssociationConnector Association="db_model.fk_tr_second_task_id" ManuallyRouted="false" />
         <AssociationConnector Association="db_model.fk_tt_template_id" ManuallyRouted="false" />
         <AssociationConnector Association="db_model.fk_u_unit_id" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="db_model.modules" Width="1.5" PointX="5.375" PointY="0.875" />
+        <AssociationConnector Association="db_model.fk_rm_module_id" />
+        <AssociationConnector Association="db_model.fk_u_boss" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

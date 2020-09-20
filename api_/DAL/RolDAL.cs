@@ -28,18 +28,19 @@ namespace api_.DAL {
         /**
          * Método para crear nuevo registro
          */
-        public static void insert(String name, List<modules> modules) {
+        public static void insert(String name, List<long> modules) {
             using (var conn = new db()) {
                 try {
                     roles entity = new roles();
                     entity.name = name;
-                    entity.created_at = new DateTime();
+                    entity.state = 1;
+                    entity.created_at = DateTime.Now;
                     conn.roles.Add(entity);
                     conn.SaveChanges();
 
-                    foreach (modules item in modules) {
+                    foreach (long item in modules) {
                         roles_modules rm = new roles_modules();
-                        rm.module_id = item.id;
+                        rm.module_id = item;
                         rm.rol_id = entity.id;
                         conn.roles_modules.Add(rm);
                     }
@@ -53,12 +54,12 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name, List<modules> modules) {
+        public static void update(decimal id, String name, List<long> modules) {
             using (var conn = new db()) {
                 try {
                     var entity = conn.roles.Where(x => x.id == id).FirstOrDefault();
                     entity.name = name;
-                    entity.updated_at = new DateTime();
+                    entity.updated_at = DateTime.Now;
                     conn.SaveChanges();
 
                     // removemos los items
@@ -67,9 +68,9 @@ namespace api_.DAL {
                     }
 
                     // agregamos las actualizaciones
-                    foreach (modules item in modules) {
+                    foreach (long item in modules) {
                         roles_modules rm = new roles_modules();
-                        rm.module_id = item.id;
+                        rm.module_id = item;
                         rm.rol_id = entity.id;
                         conn.roles_modules.Add(rm);
                     }
