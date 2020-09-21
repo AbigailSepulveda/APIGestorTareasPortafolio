@@ -16,7 +16,7 @@ namespace api_.DB
     {
         public units()
         {
-            this.users = new HashSet<users>();
+            this.users1 = new HashSet<users>();
         }
     
         public decimal id { get; set; }
@@ -26,7 +26,7 @@ namespace api_.DB
         public Nullable<decimal> state { get; set; }
         public Nullable<decimal> boss { get; set; }
     
-        public virtual ICollection<users> users { get; set; }
-        public virtual users users1 { get; set; }
+        public virtual users users { get; set; }
+        public virtual ICollection<users> users1 { get; set; }
     }
 }

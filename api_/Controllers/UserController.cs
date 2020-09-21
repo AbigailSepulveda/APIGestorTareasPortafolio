@@ -23,7 +23,7 @@ namespace api_.Controllers {
 
         [Route("insert")]
         [HttpPost]
-        public HttpResponseMessage insert([FromBody] User user) {
+        public HttpResponseMessage insert(User user) {
             try {
                 UserDomain.insert(user);
                 return response(HttpStatusCode.OK, true, "ready");
@@ -34,7 +34,7 @@ namespace api_.Controllers {
 
         [Route("update")]
         [HttpPost]
-        public HttpResponseMessage update([FromBody]User user) {
+        public HttpResponseMessage update(User user) {
             try {
                 UserDomain.update(user);
                 return response(HttpStatusCode.OK, true, "ready");
@@ -45,7 +45,7 @@ namespace api_.Controllers {
 
         [Route("signIn")]
         [HttpPost]
-        public HttpResponseMessage signIn([FromBody]String email, [FromBody]String password) {
+        public HttpResponseMessage signIn(String email, String password) {
             try {
                 return response(HttpStatusCode.OK, true, "ready", UserDomain.signIn(email, password));
             } catch (Exception e) {

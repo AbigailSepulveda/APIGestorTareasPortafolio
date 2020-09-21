@@ -33,6 +33,7 @@ namespace api_.DB
         public DbSet<log_assing_task> log_assing_task { get; set; }
         public DbSet<log_task> log_task { get; set; }
         public DbSet<messages> messages { get; set; }
+        public DbSet<modules> modules { get; set; }
         public DbSet<roles> roles { get; set; }
         public DbSet<roles_modules> roles_modules { get; set; }
         public DbSet<task_statuses> task_statuses { get; set; }
@@ -43,6 +44,5 @@ namespace api_.DB
         public DbSet<types_alerts> types_alerts { get; set; }
         public DbSet<units> units { get; set; }
         public DbSet<users> users { get; set; }
-        public DbSet<modules> modules { get; set; }
     }
 }

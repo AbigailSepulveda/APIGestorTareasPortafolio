@@ -17,6 +17,7 @@ namespace api_.DB
         public roles()
         {
             this.roles_modules = new HashSet<roles_modules>();
+            this.users = new HashSet<users>();
         }
     
         public decimal id { get; set; }
@@ -26,6 +27,6 @@ namespace api_.DB
         public Nullable<decimal> state { get; set; }
     
         public virtual ICollection<roles_modules> roles_modules { get; set; }
-        public virtual users users { get; set; }
+        public virtual ICollection<users> users { get; set; }
     }
 }

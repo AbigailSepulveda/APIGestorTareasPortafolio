@@ -48,8 +48,11 @@ namespace api_.DAL {
         public static void update(users user) {
             using (var conn = new db()) {
                 try {
-                    var entity = conn.units.Where(x => x.id == user.id).FirstOrDefault();
+                    var entity = conn.users.Where(x => x.id == user.id).FirstOrDefault();
                     user.id = entity.id;
+                    if (user.password == null || user.password == "") {
+                        user.password = entity.password;
+                    }
                     user.updated_at = new DateTime();
                     conn.SaveChanges();
                 } catch (Exception e) {
