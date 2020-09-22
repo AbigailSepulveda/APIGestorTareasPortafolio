@@ -45,9 +45,9 @@ namespace api_.Controllers {
 
         [Route("signIn")]
         [HttpPost]
-        public HttpResponseMessage signIn(String email, String password) {
+        public HttpResponseMessage signIn(User user) {
             try {
-                return response(HttpStatusCode.OK, true, "ready", UserDomain.signIn(email, password));
+                return response(HttpStatusCode.OK, true, "ready", UserDomain.signIn(user.email, user.password));
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);
             }
