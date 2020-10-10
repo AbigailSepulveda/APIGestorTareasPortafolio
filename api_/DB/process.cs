@@ -12,17 +12,20 @@ namespace api_.DB
     using System;
     using System.Collections.Generic;
     
-    public partial class log_task
+    public partial class process
     {
+        public process()
+        {
+            this.tasks = new HashSet<tasks>();
+        }
+    
         public decimal id { get; set; }
-        public Nullable<decimal> task_id { get; set; }
-        public Nullable<decimal> user_id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
+        public Nullable<decimal> state { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
-        public string task_status_code { get; set; }
     
-        public virtual task_statuses task_statuses { get; set; }
-        public virtual tasks tasks { get; set; }
-        public virtual users users { get; set; }
+        public virtual ICollection<tasks> tasks { get; set; }
     }
 }

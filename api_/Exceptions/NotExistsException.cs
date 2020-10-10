@@ -1,6 +1,6 @@
 ﻿using System;
 
 namespace api_.Exceptions {
-    public class NotFoundException : Exception {
+    public class NotExistsException : Exception{
     }
 }

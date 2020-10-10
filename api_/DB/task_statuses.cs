@@ -17,6 +17,7 @@ namespace api_.DB
         public task_statuses()
         {
             this.log_task = new HashSet<log_task>();
+            this.templates_tasks = new HashSet<templates_tasks>();
         }
     
         public decimal id { get; set; }
@@ -27,5 +28,6 @@ namespace api_.DB
         public Nullable<decimal> state { get; set; }
     
         public virtual ICollection<log_task> log_task { get; set; }
+        public virtual ICollection<templates_tasks> templates_tasks { get; set; }
     }
 }

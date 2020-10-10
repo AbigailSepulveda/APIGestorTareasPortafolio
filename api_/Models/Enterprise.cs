@@ -2,5 +2,6 @@
     public class Enterprise {
         public long id { get; set; }
         public string name { get; set; }
+        public int state { get; set; }
     }
 }

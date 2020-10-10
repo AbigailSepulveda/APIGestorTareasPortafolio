@@ -15,7 +15,7 @@ namespace api_.DAL {
          * @return true si existe
          */
         public static bool exists(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var result = conn.enterprises.Where(x => x.name.Equals(name)).FirstOrDefault();
                     return result != null;
@@ -29,13 +29,9 @@ namespace api_.DAL {
          * Método para crear nuevo registro
          */
         public static void insert(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
-                    enterprises entity = new enterprises();
-                    entity.name = name;
-                    entity.created_at = DateTime.Now;
-                    conn.enterprises.Add(entity);
-                    conn.SaveChanges();
+                    conn.SP_ENTERPRISE_INSERT(name, DateTime.Now, 1);
                 } catch (Exception e) {
                     throw e;
                 }
@@ -45,13 +41,10 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name) {
-            using (var conn = new db()) {
+        public static void update(decimal id, String name, int state) {
+            using (var conn = new db_entities()) {
                 try {
-                    var entity = conn.enterprises.Where(x => x.id == id).FirstOrDefault();
-                    entity.name = name;
-                    entity.update_at = DateTime.Now;
-                    conn.SaveChanges();
+                    conn.SP_ENTERPRISE_UPDATE(id, name, DateTime.Now, state);
                 } catch (Exception e) {
                     throw e;
                 }
@@ -62,7 +55,7 @@ namespace api_.DAL {
          * Método para devolver lista de los registros
          */
         public static List<enterprises> fetchAll() {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     return conn.enterprises.ToList();
                 } catch (Exception e) {

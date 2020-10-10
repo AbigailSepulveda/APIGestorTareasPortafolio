@@ -15,7 +15,7 @@ namespace api_.DAL {
          * @return true si existe
          */
         public static bool exists(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var result = conn.types_alerts.Where(x => x.name.Equals(name)).FirstOrDefault();
                     return result != null;
@@ -29,7 +29,7 @@ namespace api_.DAL {
          * Método para registrar nuevo tpo de alerta
          */
         public static void insert(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     types_alerts entity = new types_alerts();
                     entity.name = name;
@@ -47,7 +47,7 @@ namespace api_.DAL {
          * Método para actualizar el tipo de alerta
          */
         public static void update(decimal id, String name, int state) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var entity = conn.types_alerts.Where(x => x.id == id).FirstOrDefault();
                     entity.name = name;
@@ -64,7 +64,7 @@ namespace api_.DAL {
          * Método para devolver lista de los registros activos
          */
         public static List<types_alerts> fetchAll() {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var result = conn.types_alerts.Where(x => x.state == 1).ToList();
                     if (result != null) {

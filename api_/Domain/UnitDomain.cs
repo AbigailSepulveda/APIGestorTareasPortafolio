@@ -20,7 +20,12 @@ namespace api_.Domain {
                 return UnitDAL.fetchAll().Select(x => new Unit {
                     id = long.Parse(x.id + ""),
                     name = x.name,
-                    state = int.Parse(x.state + "")
+                    state = int.Parse(x.state + ""),
+                    boss_id = long.Parse(x.boss + ""),
+                    boss = UserDAL.fetchAll().Where(y => y.id == x.boss).Select(z => new User() {
+                        id = long.Parse(z.id + ""),
+                        name = z.name,
+                    }).FirstOrDefault()
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -30,12 +35,12 @@ namespace api_.Domain {
         /**
          * Método para crear un nuevo registro
          */
-        public static void insert(String name) {
+        public static void insert(String name, decimal boss) {
             try {
                 if (UnitDAL.exists(name)) {
                     throw new ExistsException();
                 } else {
-                    UnitDAL.insert(name);
+                    UnitDAL.insert(name, boss);
                 }
             } catch (Exception e) {
                 throw e;
@@ -45,9 +50,9 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(decimal id, String name, decimal? state) {
+        public static void update(decimal id, String name, decimal state, decimal boss) {
             try {
-                UnitDAL.update(id, name, state);
+                UnitDAL.update(id, name, state, boss);
             } catch (Exception e) {
                 throw e;
             }

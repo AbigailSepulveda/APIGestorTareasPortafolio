@@ -15,7 +15,7 @@ namespace api_.DAL {
          * @return true si existe
          */
         public static bool exists(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var result = conn.modules.Where(x => x.name.Equals(name)).FirstOrDefault();
                     return result != null;
@@ -29,7 +29,7 @@ namespace api_.DAL {
          * Método para crear nuevo registro
          */
         public static void insert(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     modules entity = new modules();
                     entity.name = name;
@@ -47,7 +47,7 @@ namespace api_.DAL {
          * Método para actualizar el registro
          */
         public static void update(decimal id, String name, int state) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var entity = conn.modules.Where(x => x.id == id).FirstOrDefault();
                     entity.name = name;
@@ -64,7 +64,7 @@ namespace api_.DAL {
          * Método para devolver lista de los registros
          */
         public static List<modules> fetchAll() {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     return conn.modules.ToList();
                 } catch (Exception e) {

@@ -66,9 +66,9 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(long id, String name, List<long> modules) {
+        public static void update(long id, String name, int state, List<long> modules) {
             try {
-                RolDAL.update(id, name, modules);
+                RolDAL.update(id, name, state, modules);
             } catch (Exception e) {
                 throw e;
             }

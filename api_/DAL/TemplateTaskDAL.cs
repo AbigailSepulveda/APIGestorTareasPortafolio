@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace api_.DAL {
-    public class RolModuleDAL {
+    public class TemplateTaskDAL {
 
-        public RolModuleDAL() {
+        public TemplateTaskDAL() {
             // default
         }
 
         /**
          * Método para devolver lista de los registros
          */
-        public static List<roles_modules> fetchAll() {
+        public static List<templates_tasks> fetchAll() {
             using (var conn = new db_entities()) {
                 try {
-                    return conn.roles_modules.ToList();
+                    return conn.templates_tasks.ToList();
                 } catch (Exception e) {
                     throw e;
                 }

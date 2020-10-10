@@ -14,32 +14,44 @@ namespace api_.Controllers {
         [Route("getAll")]
         [HttpGet]
         public HttpResponseMessage getAll() {
-            try {
-                return response(HttpStatusCode.OK, true, "ready", UnitDomain.fetchAll());
-            } catch (Exception e) {
-                return response(HttpStatusCode.OK, false, e);
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", UnitDomain.fetchAll());
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
             }
         }
 
         [Route("insert")]
         [HttpPost]
         public HttpResponseMessage insert(Unit unit) {
-            try {
-                UnitDomain.insert(unit.name);
-                return response(HttpStatusCode.OK, true, "ready");
-            } catch (Exception e) {
-                return response(HttpStatusCode.OK, false, e);
+            if (checkToken(Request)) {
+                try {
+                    UnitDomain.insert(unit.name, unit.boss_id);
+                    return response(HttpStatusCode.OK, true, "ready");
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
             }
         }
 
         [Route("update")]
         [HttpPost]
         public HttpResponseMessage update(Unit unit) {
-            try {
-                UnitDomain.update(unit.id, unit.name, unit.state);
-                return response(HttpStatusCode.OK, true, "ready");
-            } catch (Exception e) {
-                return response(HttpStatusCode.OK, false, e);
+            if (checkToken(Request)) {
+                try {
+                    UnitDomain.update(unit.id, unit.name, unit.state, unit.boss_id);
+                    return response(HttpStatusCode.OK, true, "ready");
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
             }
         }
     }

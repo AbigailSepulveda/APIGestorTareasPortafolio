@@ -1,4 +1,5 @@
 ﻿using api_.DB;
+using api_.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace api_.DAL {
          * @return true si existe
          */
         public static bool exists(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var result = conn.roles.Where(x => x.name.Equals(name)).FirstOrDefault();
                     return result != null;
@@ -29,22 +30,15 @@ namespace api_.DAL {
          * Método para crear nuevo registro
          */
         public static void insert(String name, List<long> modules) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
-                    roles entity = new roles();
-                    entity.name = name;
-                    entity.state = 1;
-                    entity.created_at = DateTime.Now;
-                    conn.roles.Add(entity);
-                    conn.SaveChanges();
-
-                    foreach (long item in modules) {
-                        roles_modules rm = new roles_modules();
-                        rm.module_id = item;
-                        rm.rol_id = entity.id;
-                        conn.roles_modules.Add(rm);
+                    conn.SP_ROL_INSERT(name, DateTime.Now, 1);
+                    var entity = conn.roles.Where(x => x.name == name).FirstOrDefault();
+                    if (modules != null) {
+                        foreach (long item in modules) {
+                            conn.SP_ROL_MODULE_INSERT(entity.id, item);
+                        }
                     }
-                    conn.SaveChanges();
                 } catch (Exception e) {
                     throw e;
                 }
@@ -54,27 +48,26 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name, List<long> modules) {
-            using (var conn = new db()) {
+        public static void update(decimal id, String name, int state, List<long> modules) {
+            using (var conn = new db_entities()) {
                 try {
                     var entity = conn.roles.Where(x => x.id == id).FirstOrDefault();
-                    entity.name = name;
-                    entity.updated_at = DateTime.Now;
-                    conn.SaveChanges();
 
-                    // removemos los items
-                    foreach (roles_modules rm in conn.roles_modules.Where(x => x.rol_id == entity.id).ToList()) {
-                        conn.roles_modules.Remove(rm);
+                    if (entity == null) {
+                        throw new NotExistsException();
+                    } else {
+                        conn.SP_ROL_UPDATE(id, name, DateTime.Now, state);
+
+                        // removemos los items
+                        foreach (roles_modules rm in conn.roles_modules.Where(x => x.rol_id == entity.id).ToList()) {
+                            conn.roles_modules.Remove(rm);
+                        }
+
+                        // agregamos las actualizaciones
+                        foreach (long item in modules) {
+                            conn.SP_ROL_MODULE_INSERT(entity.id, item);
+                        }
                     }
-
-                    // agregamos las actualizaciones
-                    foreach (long item in modules) {
-                        roles_modules rm = new roles_modules();
-                        rm.module_id = item;
-                        rm.rol_id = entity.id;
-                        conn.roles_modules.Add(rm);
-                    }
-
                 } catch (Exception e) {
                     throw e;
                 }
@@ -85,7 +78,7 @@ namespace api_.DAL {
          * Método para devolver lista de los registros
          */
         public static List<roles> fetchAll() {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     return conn.roles.ToList();
                 } catch (Exception e) {

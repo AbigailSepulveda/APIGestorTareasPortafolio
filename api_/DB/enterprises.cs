@@ -23,6 +23,7 @@ namespace api_.DB
         public string name { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> update_at { get; set; }
+        public Nullable<short> state { get; set; }
     
         public virtual ICollection<users> users { get; set; }
     }

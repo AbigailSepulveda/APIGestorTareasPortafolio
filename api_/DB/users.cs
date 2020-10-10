@@ -20,14 +20,13 @@ namespace api_.DB
             this.log_task = new HashSet<log_task>();
             this.messages = new HashSet<messages>();
             this.tasks = new HashSet<tasks>();
-            this.units = new HashSet<units>();
         }
     
         public decimal id { get; set; }
         public string name { get; set; }
         public string email { get; set; }
         public string password { get; set; }
-        public decimal rol_id { get; set; }
+        public Nullable<decimal> rol_id { get; set; }
         public Nullable<decimal> unit_id { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
@@ -41,7 +40,6 @@ namespace api_.DB
         public virtual ICollection<messages> messages { get; set; }
         public virtual roles roles { get; set; }
         public virtual ICollection<tasks> tasks { get; set; }
-        public virtual ICollection<units> units { get; set; }
-        public virtual units units1 { get; set; }
+        public virtual units units { get; set; }
     }
 }

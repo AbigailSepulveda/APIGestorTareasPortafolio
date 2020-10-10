@@ -1,10 +1,26 @@
-﻿using System;
+﻿using api_.Domain;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
 namespace api_.Controllers {
     public abstract class BaseController : ApiController {
+
+        protected bool checkToken(HttpRequestMessage request) {
+            var re = Request;
+            var headers = re.Headers;
+
+            if (headers.Contains("Authorization")) {
+                string token = headers.GetValues("Authorization").First();
+                return UserDomain.checkToken(token);
+            } else {
+                return false;
+            }
+        }
+
         /**
          * Método para responser con un objeto dinamico y estructura estandar        
          */
@@ -20,10 +36,11 @@ namespace api_.Controllers {
 
         protected HttpResponseMessage response(HttpStatusCode status, bool success,
             string message) {
+            Object pData = null;
             var result = new {
                 success,
                 message,
-                data = new Object()
+                data = pData
             };
             return Request.CreateResponse(status, result);
         }
@@ -33,10 +50,11 @@ namespace api_.Controllers {
          */
         protected HttpResponseMessage response(HttpStatusCode status, bool success,
             Exception exception) {
+            Object pData = null;
             var result = new {
                 success,
                 message = "Error: " + exception.Message.ToString(),
-                data = new Object()
+                data = pData
             };
             return Request.CreateResponse(status, result);
         }

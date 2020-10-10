@@ -33,12 +33,14 @@ namespace api_.DB
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
         public Nullable<decimal> father_taks_id { get; set; }
+        public Nullable<decimal> process_id { get; set; }
     
         public virtual ICollection<alerts> alerts { get; set; }
         public virtual ICollection<files> files { get; set; }
         public virtual ICollection<log_assing_task> log_assing_task { get; set; }
         public virtual ICollection<log_task> log_task { get; set; }
         public virtual ICollection<messages> messages { get; set; }
+        public virtual process process { get; set; }
         public virtual users users { get; set; }
         public virtual ICollection<tasks_relations> tasks_relations { get; set; }
         public virtual ICollection<tasks_relations> tasks_relations1 { get; set; }

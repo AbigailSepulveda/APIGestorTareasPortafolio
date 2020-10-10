@@ -17,11 +17,14 @@ namespace api_.DB
         public decimal id { get; set; }
         public Nullable<System.DateTime> date_start { get; set; }
         public Nullable<System.DateTime> date_end { get; set; }
-        public string task_status { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
         public decimal template_id { get; set; }
+        public string task_status_code { get; set; }
+        public string description { get; set; }
+        public string name { get; set; }
     
+        public virtual task_statuses task_statuses { get; set; }
         public virtual templates templates { get; set; }
     }
 }

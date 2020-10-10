@@ -15,7 +15,7 @@ namespace api_.DAL {
          * @return true si existe
          */
         public static bool exists(String code, String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var result = conn.task_statuses.Where(x => x.name.Equals(name) || x.code.Equals(code)).FirstOrDefault();
                     return result != null;
@@ -29,7 +29,7 @@ namespace api_.DAL {
          * Método para crear nuevo registro
          */
         public static void insert(String code, String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     task_statuses entity = new task_statuses();
                     entity.code = code;
@@ -48,7 +48,7 @@ namespace api_.DAL {
          * Método para actualizar el registro
          */
         public static void update(decimal id, String code, String name, int state) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var entity = conn.task_statuses.Where(x => x.id == id).FirstOrDefault();
                     entity.code = code;
@@ -66,7 +66,7 @@ namespace api_.DAL {
          * Método para devolver lista de los registros
          */
         public static List<task_statuses> fetchAll() {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     return conn.task_statuses.ToList();
                 } catch (Exception e) {

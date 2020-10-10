@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="db_model.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="18.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="db_model.Store" Provider="Oracle.ManagedDataAccess.Client" ProviderManifestToken="18.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="alerts">
           <Key>
             <PropertyRef Name="id" />
@@ -48,6 +48,7 @@
           <Property Name="name" Type="varchar2" MaxLength="255" />
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="update_at" Type="timestamp" Precision="6" />
+          <Property Name="state" Type="number" Precision="1" Scale="0" />
         </EntityType>
         <EntityType Name="files">
           <Key>
@@ -80,10 +81,10 @@
           </Key>
           <Property Name="id" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="task_id" Type="number" Precision="38" Scale="0" />
-          <Property Name="task_status_id" Type="number" Precision="38" Scale="0" />
           <Property Name="user_id" Type="number" Precision="38" Scale="0" />
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
+          <Property Name="task_status_code" Type="varchar2" MaxLength="250" />
         </EntityType>
         <EntityType Name="messages">
           <Key>
@@ -107,6 +108,17 @@
           <Property Name="updated_at" Type="timestamp" Precision="6" />
           <Property Name="state" Type="number" Precision="38" Scale="0" />
         </EntityType>
+        <EntityType Name="process">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="name" Type="varchar2" MaxLength="250" />
+          <Property Name="description" Type="varchar2" MaxLength="250" />
+          <Property Name="state" Type="number" Precision="38" Scale="0" />
+          <Property Name="created_at" Type="timestamp" Precision="6" />
+          <Property Name="updated_at" Type="timestamp" Precision="6" />
+        </EntityType>
         <EntityType Name="roles">
           <Key>
             <PropertyRef Name="id" />
@@ -127,11 +139,11 @@
         </EntityType>
         <EntityType Name="task_statuses">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="code" />
           </Key>
           <Property Name="id" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="name" Type="varchar2" MaxLength="250" />
-          <Property Name="code" Type="varchar2" MaxLength="250" />
+          <Property Name="code" Type="varchar2" MaxLength="250" Nullable="false" />
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
           <Property Name="state" Type="number" Precision="38" Scale="0" />
@@ -148,6 +160,7 @@
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
           <Property Name="father_taks_id" Type="number" Precision="38" Scale="0" />
+          <Property Name="process_id" Type="number" Precision="38" Scale="0" />
         </EntityType>
         <EntityType Name="tasks_relations">
           <Key>
@@ -177,10 +190,12 @@
           <Property Name="id" Type="number" Precision="38" Scale="0" Nullable="false" />
           <Property Name="date_start" Type="date" />
           <Property Name="date_end" Type="date" />
-          <Property Name="task_status" Type="varchar2" MaxLength="250" Nullable="false" />
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
           <Property Name="template_id" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="task_status_code" Type="varchar2" MaxLength="250" Nullable="false" />
+          <Property Name="description" Type="varchar2" MaxLength="255" />
+          <Property Name="name" Type="varchar2" MaxLength="255" />
         </EntityType>
         <EntityType Name="types_alerts">
           <Key>
@@ -211,7 +226,7 @@
           <Property Name="name" Type="varchar2" MaxLength="250" />
           <Property Name="email" Type="varchar2" MaxLength="250" />
           <Property Name="password" Type="varchar2" MaxLength="250" />
-          <Property Name="rol_id" Type="number" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="rol_id" Type="number" Precision="38" Scale="0" />
           <Property Name="unit_id" Type="number" Precision="38" Scale="0" />
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
@@ -279,6 +294,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_lt_status_id">
+          <End Role="task_statuses" Type="Self.task_statuses" Multiplicity="0..1" />
+          <End Role="log_task" Type="Self.log_task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task_statuses">
+              <PropertyRef Name="code" />
+            </Principal>
+            <Dependent Role="log_task">
+              <PropertyRef Name="task_status_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_lt_task_id">
           <End Role="tasks" Type="Self.tasks" Multiplicity="0..1" />
           <End Role="log_task" Type="Self.log_task" Multiplicity="*" />
@@ -288,18 +315,6 @@
             </Principal>
             <Dependent Role="log_task">
               <PropertyRef Name="task_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="fk_lt_task_status_id">
-          <End Role="task_statuses" Type="Self.task_statuses" Multiplicity="0..1" />
-          <End Role="log_task" Type="Self.log_task" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="task_statuses">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="log_task">
-              <PropertyRef Name="task_status_id" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -363,6 +378,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_t_process_id">
+          <End Role="process" Type="Self.process" Multiplicity="0..1" />
+          <End Role="tasks" Type="Self.tasks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="process">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tasks">
+              <PropertyRef Name="process_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_t_user_id">
           <End Role="users" Type="Self.users" Multiplicity="1" />
           <End Role="tasks" Type="Self.tasks" Multiplicity="*" />
@@ -399,6 +426,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_tt_status_id">
+          <End Role="task_statuses" Type="Self.task_statuses" Multiplicity="1" />
+          <End Role="templates_tasks" Type="Self.templates_tasks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task_statuses">
+              <PropertyRef Name="code" />
+            </Principal>
+            <Dependent Role="templates_tasks">
+              <PropertyRef Name="task_status_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_tt_template_id">
           <End Role="templates" Type="Self.templates" Multiplicity="1" />
           <End Role="templates_tasks" Type="Self.templates_tasks" Multiplicity="*" />
@@ -408,18 +447,6 @@
             </Principal>
             <Dependent Role="templates_tasks">
               <PropertyRef Name="template_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="fk_u_boss">
-          <End Role="users" Type="Self.users" Multiplicity="0..1" />
-          <End Role="units" Type="Self.units" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="users">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="units">
-              <PropertyRef Name="boss" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -436,7 +463,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_u_rol_id">
-          <End Role="roles" Type="Self.roles" Multiplicity="1" />
+          <End Role="roles" Type="Self.roles" Multiplicity="0..1" />
           <End Role="users" Type="Self.users" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="roles">
@@ -459,6 +486,105 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_GREEN" Type="number" Mode="In" />
+          <Parameter Name="P_YELLOW" Type="number" Mode="In" />
+          <Parameter Name="P_RED" Type="number" Mode="In" />
+          <Parameter Name="P_UPDATED_AT" Type="timestamp" Mode="In" />
+        </Function>
+        <Function Name="SP_ENTERPRISE_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_CREATE_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_ENTERPRISE_UPDATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_UPDATE_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_ROL_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_CREATE_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_ROL_MODULE_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ROL_ID" Type="number" Mode="In" />
+          <Parameter Name="P_MODULE_ID" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_ROL_UPDATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_UPDATE_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_TEMPLATE_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_DESCRIPTION" Type="varchar2" Mode="In" />
+          <Parameter Name="P_CREATE_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_TEMPLATE_TASK_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_DESCRIPTION" Type="varchar2" Mode="In" />
+          <Parameter Name="P_DATE_START" Type="date" Mode="In" />
+          <Parameter Name="P_DATE_END" Type="date" Mode="In" />
+          <Parameter Name="P_TEMPLATE_ID" Type="number" Mode="In" />
+          <Parameter Name="P_TASK_STATUS_CODE" Type="varchar2" Mode="In" />
+          <Parameter Name="P_CREATE_AT" Type="timestamp" Mode="In" />
+        </Function>
+        <Function Name="SP_TEMPLATE_UPDATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_DESCRIPTION" Type="varchar2" Mode="In" />
+          <Parameter Name="P_UPDATED_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_UNIT_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_CREATE_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+          <Parameter Name="P_BOSS" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_UNIT_UPDATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_UPDATED_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+          <Parameter Name="P_BOSS" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_USER_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_EMAIL" Type="varchar2" Mode="In" />
+          <Parameter Name="P_PASSWORD" Type="varchar2" Mode="In" />
+          <Parameter Name="P_ROL_ID" Type="number" Mode="In" />
+          <Parameter Name="P_UNIT_ID" Type="number" Mode="In" />
+          <Parameter Name="P_CREATED_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+          <Parameter Name="P_ENTERPRISE_ID" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_USER_UPDATE_WITHOUT_PASSWORD" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_EMAIL" Type="varchar2" Mode="In" />
+          <Parameter Name="P_ROL_ID" Type="number" Mode="In" />
+          <Parameter Name="P_UNIT_ID" Type="number" Mode="In" />
+          <Parameter Name="P_UPDATED_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+          <Parameter Name="P_ENTERPRISE_ID" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_USER_UPDATE_WITH_PASSWORD" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
+          <Parameter Name="P_EMAIL" Type="varchar2" Mode="In" />
+          <Parameter Name="P_PASSWORD" Type="varchar2" Mode="In" />
+          <Parameter Name="P_ROL_ID" Type="number" Mode="In" />
+          <Parameter Name="P_UNIT_ID" Type="number" Mode="In" />
+          <Parameter Name="P_UPDATED_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+          <Parameter Name="P_ENTERPRISE_ID" Type="number" Mode="In" />
+        </Function>
         <EntityContainer Name="db_modelStoreContainer">
           <EntitySet Name="alerts" EntityType="Self.alerts" Schema="PORTAFOLIO" store:Type="Tables" />
           <EntitySet Name="config_devices" EntityType="Self.config_devices" Schema="PORTAFOLIO" store:Type="Tables" />
@@ -469,6 +595,7 @@
           <EntitySet Name="log_task" EntityType="Self.log_task" Schema="PORTAFOLIO" store:Type="Tables" />
           <EntitySet Name="messages" EntityType="Self.messages" Schema="PORTAFOLIO" store:Type="Tables" />
           <EntitySet Name="modules" EntityType="Self.modules" Schema="PORTAFOLIO" store:Type="Tables" />
+          <EntitySet Name="process" EntityType="Self.process" Schema="PORTAFOLIO" store:Type="Tables" />
           <EntitySet Name="roles" EntityType="Self.roles" Schema="PORTAFOLIO" store:Type="Tables" />
           <EntitySet Name="roles_modules" EntityType="Self.roles_modules" Schema="PORTAFOLIO" store:Type="Tables" />
           <EntitySet Name="task_statuses" EntityType="Self.task_statuses" Schema="PORTAFOLIO" store:Type="Tables" />
@@ -499,12 +626,12 @@
             <End Role="users" EntitySet="users" />
             <End Role="log_assing_task" EntitySet="log_assing_task" />
           </AssociationSet>
-          <AssociationSet Name="fk_lt_task_id" Association="Self.fk_lt_task_id">
-            <End Role="tasks" EntitySet="tasks" />
+          <AssociationSet Name="fk_lt_status_id" Association="Self.fk_lt_status_id">
+            <End Role="task_statuses" EntitySet="task_statuses" />
             <End Role="log_task" EntitySet="log_task" />
           </AssociationSet>
-          <AssociationSet Name="fk_lt_task_status_id" Association="Self.fk_lt_task_status_id">
-            <End Role="task_statuses" EntitySet="task_statuses" />
+          <AssociationSet Name="fk_lt_task_id" Association="Self.fk_lt_task_id">
+            <End Role="tasks" EntitySet="tasks" />
             <End Role="log_task" EntitySet="log_task" />
           </AssociationSet>
           <AssociationSet Name="fk_lt_user_id" Association="Self.fk_lt_user_id">
@@ -527,6 +654,10 @@
             <End Role="roles" EntitySet="roles" />
             <End Role="roles_modules" EntitySet="roles_modules" />
           </AssociationSet>
+          <AssociationSet Name="fk_t_process_id" Association="Self.fk_t_process_id">
+            <End Role="process" EntitySet="process" />
+            <End Role="tasks" EntitySet="tasks" />
+          </AssociationSet>
           <AssociationSet Name="fk_t_user_id" Association="Self.fk_t_user_id">
             <End Role="users" EntitySet="users" />
             <End Role="tasks" EntitySet="tasks" />
@@ -539,13 +670,13 @@
             <End Role="tasks" EntitySet="tasks" />
             <End Role="tasks_relations" EntitySet="tasks_relations" />
           </AssociationSet>
+          <AssociationSet Name="fk_tt_status_id" Association="Self.fk_tt_status_id">
+            <End Role="task_statuses" EntitySet="task_statuses" />
+            <End Role="templates_tasks" EntitySet="templates_tasks" />
+          </AssociationSet>
           <AssociationSet Name="fk_tt_template_id" Association="Self.fk_tt_template_id">
             <End Role="templates" EntitySet="templates" />
             <End Role="templates_tasks" EntitySet="templates_tasks" />
-          </AssociationSet>
-          <AssociationSet Name="fk_u_boss" Association="Self.fk_u_boss">
-            <End Role="users" EntitySet="users" />
-            <End Role="units" EntitySet="units" />
           </AssociationSet>
           <AssociationSet Name="fk_u_enterprise_id" Association="Self.fk_u_enterprise_id">
             <End Role="enterprises" EntitySet="enterprises" />
@@ -560,29 +691,233 @@
             <End Role="users" EntitySet="users" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="db_model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="db_entities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_GREEN" Mode="In" Type="Decimal" />
+            <Parameter Name="P_YELLOW" Mode="In" Type="Decimal" />
+            <Parameter Name="P_RED" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ENTERPRISE_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ENTERPRISE_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ROL_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ROL_MODULE_INSERT">
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_MODULE_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ROL_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_UNIT_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+            <Parameter Name="P_BOSS" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_UNIT_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+            <Parameter Name="P_BOSS" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_USER_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
+            <Parameter Name="P_PASSWORD" Mode="In" Type="String" />
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_CREATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+            <Parameter Name="P_ENTERPRISE_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_USER_UPDATE_WITHOUT_PASSWORD">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+            <Parameter Name="P_ENTERPRISE_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_USER_UPDATE_WITH_PASSWORD">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
+            <Parameter Name="P_PASSWORD" Mode="In" Type="String" />
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+            <Parameter Name="P_ENTERPRISE_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <EntitySet Name="alerts" EntityType="db_model.alerts" />
+          <EntitySet Name="config_devices" EntityType="db_model.config_devices" />
+          <EntitySet Name="config_traffic_lights" EntityType="db_model.config_traffic_lights" />
+          <EntitySet Name="enterprises" EntityType="db_model.enterprises" />
+          <EntitySet Name="files" EntityType="db_model.files" />
+          <EntitySet Name="log_assing_task" EntityType="db_model.log_assing_task" />
+          <EntitySet Name="log_task" EntityType="db_model.log_task" />
+          <EntitySet Name="messages" EntityType="db_model.messages" />
+          <EntitySet Name="modules" EntityType="db_model.modules" />
+          <EntitySet Name="process" EntityType="db_model.process" />
+          <EntitySet Name="roles" EntityType="db_model.roles" />
+          <EntitySet Name="roles_modules" EntityType="db_model.roles_modules" />
+          <EntitySet Name="task_statuses" EntityType="db_model.task_statuses" />
+          <EntitySet Name="tasks" EntityType="db_model.tasks" />
+          <EntitySet Name="tasks_relations" EntityType="db_model.tasks_relations" />
+          <EntitySet Name="templates" EntityType="db_model.templates" />
+          <EntitySet Name="templates_tasks" EntityType="db_model.templates_tasks" />
+          <EntitySet Name="types_alerts" EntityType="db_model.types_alerts" />
+          <EntitySet Name="units" EntityType="db_model.units" />
+          <EntitySet Name="users" EntityType="db_model.users" />
+          <AssociationSet Name="fk_a_task_id" Association="db_model.fk_a_task_id">
+            <End Role="tasks" EntitySet="tasks" />
+            <End Role="alerts" EntitySet="alerts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_a_type_alert_id" Association="db_model.fk_a_type_alert_id">
+            <End Role="types_alerts" EntitySet="types_alerts" />
+            <End Role="alerts" EntitySet="alerts" />
+          </AssociationSet>
+          <AssociationSet Name="fk_u_enterprise_id" Association="db_model.fk_u_enterprise_id">
+            <End Role="enterprises" EntitySet="enterprises" />
+            <End Role="users" EntitySet="users" />
+          </AssociationSet>
+          <AssociationSet Name="fk_f_task_id" Association="db_model.fk_f_task_id">
+            <End Role="tasks" EntitySet="tasks" />
+            <End Role="files" EntitySet="files" />
+          </AssociationSet>
+          <AssociationSet Name="fk_lat_task_id" Association="db_model.fk_lat_task_id">
+            <End Role="tasks" EntitySet="tasks" />
+            <End Role="log_assing_task" EntitySet="log_assing_task" />
+          </AssociationSet>
+          <AssociationSet Name="fk_lat_user_id" Association="db_model.fk_lat_user_id">
+            <End Role="users" EntitySet="users" />
+            <End Role="log_assing_task" EntitySet="log_assing_task" />
+          </AssociationSet>
+          <AssociationSet Name="fk_lt_status_id" Association="db_model.fk_lt_status_id">
+            <End Role="task_statuses" EntitySet="task_statuses" />
+            <End Role="log_task" EntitySet="log_task" />
+          </AssociationSet>
+          <AssociationSet Name="fk_lt_task_id" Association="db_model.fk_lt_task_id">
+            <End Role="tasks" EntitySet="tasks" />
+            <End Role="log_task" EntitySet="log_task" />
+          </AssociationSet>
+          <AssociationSet Name="fk_lt_user_id" Association="db_model.fk_lt_user_id">
+            <End Role="users" EntitySet="users" />
+            <End Role="log_task" EntitySet="log_task" />
+          </AssociationSet>
+          <AssociationSet Name="fk_m_task_id" Association="db_model.fk_m_task_id">
+            <End Role="tasks" EntitySet="tasks" />
+            <End Role="messages" EntitySet="messages" />
+          </AssociationSet>
+          <AssociationSet Name="fk_m_user_id" Association="db_model.fk_m_user_id">
+            <End Role="users" EntitySet="users" />
+            <End Role="messages" EntitySet="messages" />
+          </AssociationSet>
+          <AssociationSet Name="fk_rm_module_id" Association="db_model.fk_rm_module_id">
+            <End Role="modules" EntitySet="modules" />
+            <End Role="roles_modules" EntitySet="roles_modules" />
+          </AssociationSet>
+          <AssociationSet Name="fk_t_process_id" Association="db_model.fk_t_process_id">
+            <End Role="process" EntitySet="process" />
+            <End Role="tasks" EntitySet="tasks" />
+          </AssociationSet>
+          <AssociationSet Name="fk_rm_rol_id" Association="db_model.fk_rm_rol_id">
+            <End Role="roles" EntitySet="roles" />
+            <End Role="roles_modules" EntitySet="roles_modules" />
+          </AssociationSet>
+          <AssociationSet Name="fk_u_rol_id" Association="db_model.fk_u_rol_id">
+            <End Role="roles" EntitySet="roles" />
+            <End Role="users" EntitySet="users" />
+          </AssociationSet>
+          <AssociationSet Name="fk_tt_status_id" Association="db_model.fk_tt_status_id">
+            <End Role="task_statuses" EntitySet="task_statuses" />
+            <End Role="templates_tasks" EntitySet="templates_tasks" />
+          </AssociationSet>
+          <AssociationSet Name="fk_t_user_id" Association="db_model.fk_t_user_id">
+            <End Role="users" EntitySet="users" />
+            <End Role="tasks" EntitySet="tasks" />
+          </AssociationSet>
+          <AssociationSet Name="fk_tr_first_task_id" Association="db_model.fk_tr_first_task_id">
+            <End Role="tasks" EntitySet="tasks" />
+            <End Role="tasks_relations" EntitySet="tasks_relations" />
+          </AssociationSet>
+          <AssociationSet Name="fk_tr_second_task_id" Association="db_model.fk_tr_second_task_id">
+            <End Role="tasks" EntitySet="tasks" />
+            <End Role="tasks_relations" EntitySet="tasks_relations" />
+          </AssociationSet>
+          <AssociationSet Name="fk_tt_template_id" Association="db_model.fk_tt_template_id">
+            <End Role="templates" EntitySet="templates" />
+            <End Role="templates_tasks" EntitySet="templates_tasks" />
+          </AssociationSet>
+          <AssociationSet Name="fk_u_unit_id" Association="db_model.fk_u_unit_id">
+            <End Role="units" EntitySet="units" />
+            <End Role="users" EntitySet="users" />
+          </AssociationSet>
+          <FunctionImport Name="SP_TEMPLATE_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_TEMPLATE_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_TEMPLATE_TASK_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
+            <Parameter Name="P_DATE_START" Mode="In" Type="DateTime" />
+            <Parameter Name="P_DATE_END" Mode="In" Type="DateTime" />
+            <Parameter Name="P_TEMPLATE_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_TASK_STATUS_CODE" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+          </FunctionImport>
+        </EntityContainer>
         <EntityType Name="alerts">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="message" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="type_alert_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="task_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
-          <NavigationProperty Name="tasks" Relationship="Self.fk_a_task_id" FromRole="alerts" ToRole="tasks" />
-          <NavigationProperty Name="types_alerts" Relationship="Self.fk_a_type_alert_id" FromRole="alerts" ToRole="types_alerts" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_a_task_id" FromRole="alerts" ToRole="tasks" />
+          <NavigationProperty Name="types_alerts" Relationship="db_model.fk_a_type_alert_id" FromRole="alerts" ToRole="types_alerts" />
         </EntityType>
         <EntityType Name="config_devices">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="model" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="brand" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="unique_id" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
@@ -594,7 +929,7 @@
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="green" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="yellow" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
@@ -606,222 +941,239 @@
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="update_at" Type="DateTime" Precision="6" />
-          <NavigationProperty Name="users" Relationship="Self.fk_u_enterprise_id" FromRole="enterprises" ToRole="users" />
+          <Property Name="state" Type="Int16" />
+          <NavigationProperty Name="users" Relationship="db_model.fk_u_enterprise_id" FromRole="enterprises" ToRole="users" />
         </EntityType>
         <EntityType Name="files">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="task_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="task_id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="url" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="path" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="version" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
-          <NavigationProperty Name="tasks" Relationship="Self.fk_f_task_id" FromRole="files" ToRole="tasks" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_f_task_id" FromRole="files" ToRole="tasks" />
         </EntityType>
         <EntityType Name="log_assing_task">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="accept" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="message" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="user_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="task_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
-          <NavigationProperty Name="tasks" Relationship="Self.fk_lat_task_id" FromRole="log_assing_task" ToRole="tasks" />
-          <NavigationProperty Name="users" Relationship="Self.fk_lat_user_id" FromRole="log_assing_task" ToRole="users" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_lat_task_id" FromRole="log_assing_task" ToRole="tasks" />
+          <NavigationProperty Name="users" Relationship="db_model.fk_lat_user_id" FromRole="log_assing_task" ToRole="users" />
         </EntityType>
         <EntityType Name="log_task">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="task_id" Type="Decimal" Precision="38" Scale="0" />
-          <Property Name="task_status_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="user_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
-          <NavigationProperty Name="tasks" Relationship="Self.fk_lt_task_id" FromRole="log_task" ToRole="tasks" />
-          <NavigationProperty Name="task_statuses" Relationship="Self.fk_lt_task_status_id" FromRole="log_task" ToRole="task_statuses" />
-          <NavigationProperty Name="users" Relationship="Self.fk_lt_user_id" FromRole="log_task" ToRole="users" />
+          <Property Name="task_status_code" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="task_statuses" Relationship="db_model.fk_lt_status_id" FromRole="log_task" ToRole="task_statuses" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_lt_task_id" FromRole="log_task" ToRole="tasks" />
+          <NavigationProperty Name="users" Relationship="db_model.fk_lt_user_id" FromRole="log_task" ToRole="users" />
         </EntityType>
         <EntityType Name="messages">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="message" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="userd_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="task_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="tasks" Relationship="Self.fk_m_task_id" FromRole="messages" ToRole="tasks" />
-          <NavigationProperty Name="users" Relationship="Self.fk_m_user_id" FromRole="messages" ToRole="users" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_m_task_id" FromRole="messages" ToRole="tasks" />
+          <NavigationProperty Name="users" Relationship="db_model.fk_m_user_id" FromRole="messages" ToRole="users" />
         </EntityType>
         <EntityType Name="modules">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="roles_modules" Relationship="Self.fk_rm_module_id" FromRole="modules" ToRole="roles_modules" />
+          <NavigationProperty Name="roles_modules" Relationship="db_model.fk_rm_module_id" FromRole="modules" ToRole="roles_modules" />
+        </EntityType>
+        <EntityType Name="process">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="created_at" Type="DateTime" Precision="6" />
+          <Property Name="updated_at" Type="DateTime" Precision="6" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_t_process_id" FromRole="process" ToRole="tasks" />
         </EntityType>
         <EntityType Name="roles">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="roles_modules" Relationship="Self.fk_rm_rol_id" FromRole="roles" ToRole="roles_modules" />
-          <NavigationProperty Name="users" Relationship="Self.fk_u_rol_id" FromRole="roles" ToRole="users" />
+          <NavigationProperty Name="roles_modules" Relationship="db_model.fk_rm_rol_id" FromRole="roles" ToRole="roles_modules" />
+          <NavigationProperty Name="users" Relationship="db_model.fk_u_rol_id" FromRole="roles" ToRole="users" />
         </EntityType>
         <EntityType Name="roles_modules">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="rol_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="module_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <NavigationProperty Name="modules" Relationship="Self.fk_rm_module_id" FromRole="roles_modules" ToRole="modules" />
-          <NavigationProperty Name="roles" Relationship="Self.fk_rm_rol_id" FromRole="roles_modules" ToRole="roles" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="rol_id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="module_id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <NavigationProperty Name="modules" Relationship="db_model.fk_rm_module_id" FromRole="roles_modules" ToRole="modules" />
+          <NavigationProperty Name="roles" Relationship="db_model.fk_rm_rol_id" FromRole="roles_modules" ToRole="roles" />
         </EntityType>
         <EntityType Name="task_statuses">
           <Key>
-            <PropertyRef Name="id" />
+            <PropertyRef Name="code" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="code" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="code" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="log_task" Relationship="Self.fk_lt_task_status_id" FromRole="task_statuses" ToRole="log_task" />
+          <NavigationProperty Name="log_task" Relationship="db_model.fk_lt_status_id" FromRole="task_statuses" ToRole="log_task" />
+          <NavigationProperty Name="templates_tasks" Relationship="db_model.fk_tt_status_id" FromRole="task_statuses" ToRole="templates_tasks" />
         </EntityType>
         <EntityType Name="tasks">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="creator_user_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="creator_user_id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="date_start" Type="DateTime" />
           <Property Name="date_end" Type="DateTime" />
-          <Property Name="task_status" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="task_status" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="father_taks_id" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="alerts" Relationship="Self.fk_a_task_id" FromRole="tasks" ToRole="alerts" />
-          <NavigationProperty Name="files" Relationship="Self.fk_f_task_id" FromRole="tasks" ToRole="files" />
-          <NavigationProperty Name="log_assing_task" Relationship="Self.fk_lat_task_id" FromRole="tasks" ToRole="log_assing_task" />
-          <NavigationProperty Name="log_task" Relationship="Self.fk_lt_task_id" FromRole="tasks" ToRole="log_task" />
-          <NavigationProperty Name="messages" Relationship="Self.fk_m_task_id" FromRole="tasks" ToRole="messages" />
-          <NavigationProperty Name="users" Relationship="Self.fk_t_user_id" FromRole="tasks" ToRole="users" />
-          <NavigationProperty Name="tasks_relations" Relationship="Self.fk_tr_first_task_id" FromRole="tasks" ToRole="tasks_relations" />
-          <NavigationProperty Name="tasks_relations1" Relationship="Self.fk_tr_second_task_id" FromRole="tasks" ToRole="tasks_relations" />
+          <Property Name="process_id" Type="Decimal" Precision="38" Scale="0" />
+          <NavigationProperty Name="alerts" Relationship="db_model.fk_a_task_id" FromRole="tasks" ToRole="alerts" />
+          <NavigationProperty Name="files" Relationship="db_model.fk_f_task_id" FromRole="tasks" ToRole="files" />
+          <NavigationProperty Name="log_assing_task" Relationship="db_model.fk_lat_task_id" FromRole="tasks" ToRole="log_assing_task" />
+          <NavigationProperty Name="log_task" Relationship="db_model.fk_lt_task_id" FromRole="tasks" ToRole="log_task" />
+          <NavigationProperty Name="messages" Relationship="db_model.fk_m_task_id" FromRole="tasks" ToRole="messages" />
+          <NavigationProperty Name="process" Relationship="db_model.fk_t_process_id" FromRole="tasks" ToRole="process" />
+          <NavigationProperty Name="users" Relationship="db_model.fk_t_user_id" FromRole="tasks" ToRole="users" />
+          <NavigationProperty Name="tasks_relations" Relationship="db_model.fk_tr_first_task_id" FromRole="tasks" ToRole="tasks_relations" />
+          <NavigationProperty Name="tasks_relations1" Relationship="db_model.fk_tr_second_task_id" FromRole="tasks" ToRole="tasks_relations" />
         </EntityType>
         <EntityType Name="tasks_relations">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="first_task_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <Property Name="second_task_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="first_task_id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="second_task_id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
-          <NavigationProperty Name="tasks" Relationship="Self.fk_tr_first_task_id" FromRole="tasks_relations" ToRole="tasks" />
-          <NavigationProperty Name="tasks1" Relationship="Self.fk_tr_second_task_id" FromRole="tasks_relations" ToRole="tasks" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_tr_first_task_id" FromRole="tasks_relations" ToRole="tasks" />
+          <NavigationProperty Name="tasks1" Relationship="db_model.fk_tr_second_task_id" FromRole="tasks_relations" ToRole="tasks" />
         </EntityType>
         <EntityType Name="templates">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="templates_tasks" Relationship="Self.fk_tt_template_id" FromRole="templates" ToRole="templates_tasks" />
+          <NavigationProperty Name="templates_tasks" Relationship="db_model.fk_tt_template_id" FromRole="templates" ToRole="templates_tasks" />
         </EntityType>
         <EntityType Name="templates_tasks">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="date_start" Type="DateTime" />
           <Property Name="date_end" Type="DateTime" />
-          <Property Name="task_status" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
-          <Property Name="template_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
-          <NavigationProperty Name="templates" Relationship="Self.fk_tt_template_id" FromRole="templates_tasks" ToRole="templates" />
+          <Property Name="template_id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
+          <Property Name="task_status_code" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="task_statuses" Relationship="db_model.fk_tt_status_id" FromRole="templates_tasks" ToRole="task_statuses" />
+          <NavigationProperty Name="templates" Relationship="db_model.fk_tt_template_id" FromRole="templates_tasks" ToRole="templates" />
+          <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="types_alerts">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="alerts" Relationship="Self.fk_a_type_alert_id" FromRole="types_alerts" ToRole="alerts" />
+          <NavigationProperty Name="alerts" Relationship="db_model.fk_a_type_alert_id" FromRole="types_alerts" ToRole="alerts" />
         </EntityType>
         <EntityType Name="units">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="boss" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="users" Relationship="Self.fk_u_boss" FromRole="units" ToRole="users" />
-          <NavigationProperty Name="users1" Relationship="Self.fk_u_unit_id" FromRole="units" ToRole="users" />
+          <NavigationProperty Name="users" Relationship="db_model.fk_u_unit_id" FromRole="units" ToRole="users" />
         </EntityType>
         <EntityType Name="users">
           <Key>
             <PropertyRef Name="id" />
           </Key>
-          <Property Name="id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="id" Type="Decimal" Nullable="false" Precision="38" Scale="0" />
           <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="email" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="password" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="rol_id" Type="Decimal" Precision="38" Scale="0" Nullable="false" />
+          <Property Name="rol_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="unit_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="token_session" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="enterprise_id" Type="Decimal" Precision="38" Scale="0" />
-          <NavigationProperty Name="enterprises" Relationship="Self.fk_u_enterprise_id" FromRole="users" ToRole="enterprises" />
-          <NavigationProperty Name="log_assing_task" Relationship="Self.fk_lat_user_id" FromRole="users" ToRole="log_assing_task" />
-          <NavigationProperty Name="log_task" Relationship="Self.fk_lt_user_id" FromRole="users" ToRole="log_task" />
-          <NavigationProperty Name="messages" Relationship="Self.fk_m_user_id" FromRole="users" ToRole="messages" />
-          <NavigationProperty Name="roles" Relationship="Self.fk_u_rol_id" FromRole="users" ToRole="roles" />
-          <NavigationProperty Name="tasks" Relationship="Self.fk_t_user_id" FromRole="users" ToRole="tasks" />
-          <NavigationProperty Name="units" Relationship="Self.fk_u_boss" FromRole="users" ToRole="units" />
-          <NavigationProperty Name="units1" Relationship="Self.fk_u_unit_id" FromRole="users" ToRole="units" />
+          <NavigationProperty Name="enterprises" Relationship="db_model.fk_u_enterprise_id" FromRole="users" ToRole="enterprises" />
+          <NavigationProperty Name="log_assing_task" Relationship="db_model.fk_lat_user_id" FromRole="users" ToRole="log_assing_task" />
+          <NavigationProperty Name="log_task" Relationship="db_model.fk_lt_user_id" FromRole="users" ToRole="log_task" />
+          <NavigationProperty Name="messages" Relationship="db_model.fk_m_user_id" FromRole="users" ToRole="messages" />
+          <NavigationProperty Name="roles" Relationship="db_model.fk_u_rol_id" FromRole="users" ToRole="roles" />
+          <NavigationProperty Name="tasks" Relationship="db_model.fk_t_user_id" FromRole="users" ToRole="tasks" />
+          <NavigationProperty Name="units" Relationship="db_model.fk_u_unit_id" FromRole="users" ToRole="units" />
         </EntityType>
         <Association Name="fk_a_task_id">
-          <End Role="tasks" Type="Self.tasks" Multiplicity="0..1" />
-          <End Role="alerts" Type="Self.alerts" Multiplicity="*" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="0..1" />
+          <End Type="db_model.alerts" Role="alerts" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tasks">
               <PropertyRef Name="id" />
@@ -832,8 +1184,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_a_type_alert_id">
-          <End Role="types_alerts" Type="Self.types_alerts" Multiplicity="0..1" />
-          <End Role="alerts" Type="Self.alerts" Multiplicity="*" />
+          <End Type="db_model.types_alerts" Role="types_alerts" Multiplicity="0..1" />
+          <End Type="db_model.alerts" Role="alerts" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="types_alerts">
               <PropertyRef Name="id" />
@@ -844,8 +1196,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_u_enterprise_id">
-          <End Role="enterprises" Type="Self.enterprises" Multiplicity="0..1" />
-          <End Role="users" Type="Self.users" Multiplicity="*" />
+          <End Type="db_model.enterprises" Role="enterprises" Multiplicity="0..1" />
+          <End Type="db_model.users" Role="users" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="enterprises">
               <PropertyRef Name="id" />
@@ -856,8 +1208,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_f_task_id">
-          <End Role="tasks" Type="Self.tasks" Multiplicity="1" />
-          <End Role="files" Type="Self.files" Multiplicity="*" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="1" />
+          <End Type="db_model.files" Role="files" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tasks">
               <PropertyRef Name="id" />
@@ -868,8 +1220,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_lat_task_id">
-          <End Role="tasks" Type="Self.tasks" Multiplicity="0..1" />
-          <End Role="log_assing_task" Type="Self.log_assing_task" Multiplicity="*" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="0..1" />
+          <End Type="db_model.log_assing_task" Role="log_assing_task" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tasks">
               <PropertyRef Name="id" />
@@ -880,8 +1232,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_lat_user_id">
-          <End Role="users" Type="Self.users" Multiplicity="0..1" />
-          <End Role="log_assing_task" Type="Self.log_assing_task" Multiplicity="*" />
+          <End Type="db_model.users" Role="users" Multiplicity="0..1" />
+          <End Type="db_model.log_assing_task" Role="log_assing_task" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
               <PropertyRef Name="id" />
@@ -891,9 +1243,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_lt_status_id">
+          <End Type="db_model.task_statuses" Role="task_statuses" Multiplicity="0..1" />
+          <End Type="db_model.log_task" Role="log_task" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task_statuses">
+              <PropertyRef Name="code" />
+            </Principal>
+            <Dependent Role="log_task">
+              <PropertyRef Name="task_status_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_lt_task_id">
-          <End Role="tasks" Type="Self.tasks" Multiplicity="0..1" />
-          <End Role="log_task" Type="Self.log_task" Multiplicity="*" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="0..1" />
+          <End Type="db_model.log_task" Role="log_task" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tasks">
               <PropertyRef Name="id" />
@@ -903,21 +1267,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="fk_lt_task_status_id">
-          <End Role="task_statuses" Type="Self.task_statuses" Multiplicity="0..1" />
-          <End Role="log_task" Type="Self.log_task" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="task_statuses">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="log_task">
-              <PropertyRef Name="task_status_id" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="fk_lt_user_id">
-          <End Role="users" Type="Self.users" Multiplicity="0..1" />
-          <End Role="log_task" Type="Self.log_task" Multiplicity="*" />
+          <End Type="db_model.users" Role="users" Multiplicity="0..1" />
+          <End Type="db_model.log_task" Role="log_task" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
               <PropertyRef Name="id" />
@@ -928,8 +1280,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_m_task_id">
-          <End Role="tasks" Type="Self.tasks" Multiplicity="0..1" />
-          <End Role="messages" Type="Self.messages" Multiplicity="*" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="0..1" />
+          <End Type="db_model.messages" Role="messages" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tasks">
               <PropertyRef Name="id" />
@@ -940,8 +1292,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_m_user_id">
-          <End Role="users" Type="Self.users" Multiplicity="0..1" />
-          <End Role="messages" Type="Self.messages" Multiplicity="*" />
+          <End Type="db_model.users" Role="users" Multiplicity="0..1" />
+          <End Type="db_model.messages" Role="messages" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
               <PropertyRef Name="id" />
@@ -952,8 +1304,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_rm_module_id">
-          <End Role="modules" Type="Self.modules" Multiplicity="1" />
-          <End Role="roles_modules" Type="Self.roles_modules" Multiplicity="*" />
+          <End Type="db_model.modules" Role="modules" Multiplicity="1" />
+          <End Type="db_model.roles_modules" Role="roles_modules" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="modules">
               <PropertyRef Name="id" />
@@ -963,9 +1315,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_t_process_id">
+          <End Type="db_model.process" Role="process" Multiplicity="0..1" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="process">
+              <PropertyRef Name="id" />
+            </Principal>
+            <Dependent Role="tasks">
+              <PropertyRef Name="process_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_rm_rol_id">
-          <End Role="roles" Type="Self.roles" Multiplicity="1" />
-          <End Role="roles_modules" Type="Self.roles_modules" Multiplicity="*" />
+          <End Type="db_model.roles" Role="roles" Multiplicity="1" />
+          <End Type="db_model.roles_modules" Role="roles_modules" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="roles">
               <PropertyRef Name="id" />
@@ -976,8 +1340,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_u_rol_id">
-          <End Role="roles" Type="Self.roles" Multiplicity="1" />
-          <End Role="users" Type="Self.users" Multiplicity="*" />
+          <End Type="db_model.roles" Role="roles" Multiplicity="0..1" />
+          <End Type="db_model.users" Role="users" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="roles">
               <PropertyRef Name="id" />
@@ -987,9 +1351,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_tt_status_id">
+          <End Type="db_model.task_statuses" Role="task_statuses" Multiplicity="1" />
+          <End Type="db_model.templates_tasks" Role="templates_tasks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="task_statuses">
+              <PropertyRef Name="code" />
+            </Principal>
+            <Dependent Role="templates_tasks">
+              <PropertyRef Name="task_status_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_t_user_id">
-          <End Role="users" Type="Self.users" Multiplicity="1" />
-          <End Role="tasks" Type="Self.tasks" Multiplicity="*" />
+          <End Type="db_model.users" Role="users" Multiplicity="1" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="users">
               <PropertyRef Name="id" />
@@ -1000,8 +1376,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_tr_first_task_id">
-          <End Role="tasks" Type="Self.tasks" Multiplicity="1" />
-          <End Role="tasks_relations" Type="Self.tasks_relations" Multiplicity="*" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="1" />
+          <End Type="db_model.tasks_relations" Role="tasks_relations" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tasks">
               <PropertyRef Name="id" />
@@ -1012,8 +1388,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_tr_second_task_id">
-          <End Role="tasks" Type="Self.tasks" Multiplicity="1" />
-          <End Role="tasks_relations" Type="Self.tasks_relations" Multiplicity="*" />
+          <End Type="db_model.tasks" Role="tasks" Multiplicity="1" />
+          <End Type="db_model.tasks_relations" Role="tasks_relations" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="tasks">
               <PropertyRef Name="id" />
@@ -1024,8 +1400,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="fk_tt_template_id">
-          <End Role="templates" Type="Self.templates" Multiplicity="1" />
-          <End Role="templates_tasks" Type="Self.templates_tasks" Multiplicity="*" />
+          <End Type="db_model.templates" Role="templates" Multiplicity="1" />
+          <End Type="db_model.templates_tasks" Role="templates_tasks" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="templates">
               <PropertyRef Name="id" />
@@ -1035,21 +1411,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="fk_u_boss">
-          <End Role="users" Type="Self.users" Multiplicity="0..1" />
-          <End Role="units" Type="Self.units" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="users">
-              <PropertyRef Name="id" />
-            </Principal>
-            <Dependent Role="units">
-              <PropertyRef Name="boss" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="fk_u_unit_id">
-          <End Role="units" Type="Self.units" Multiplicity="0..1" />
-          <End Role="users" Type="Self.users" Multiplicity="*" />
+          <End Type="db_model.units" Role="units" Multiplicity="0..1" />
+          <End Type="db_model.users" Role="users" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="units">
               <PropertyRef Name="id" />
@@ -1059,346 +1423,275 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="db" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="alerts" EntityType="Self.alerts" />
-          <EntitySet Name="config_devices" EntityType="Self.config_devices" />
-          <EntitySet Name="config_traffic_lights" EntityType="Self.config_traffic_lights" />
-          <EntitySet Name="enterprises" EntityType="Self.enterprises" />
-          <EntitySet Name="files" EntityType="Self.files" />
-          <EntitySet Name="log_assing_task" EntityType="Self.log_assing_task" />
-          <EntitySet Name="log_task" EntityType="Self.log_task" />
-          <EntitySet Name="messages" EntityType="Self.messages" />
-          <EntitySet Name="modules" EntityType="Self.modules" />
-          <EntitySet Name="roles" EntityType="Self.roles" />
-          <EntitySet Name="roles_modules" EntityType="Self.roles_modules" />
-          <EntitySet Name="task_statuses" EntityType="Self.task_statuses" />
-          <EntitySet Name="tasks" EntityType="Self.tasks" />
-          <EntitySet Name="tasks_relations" EntityType="Self.tasks_relations" />
-          <EntitySet Name="templates" EntityType="Self.templates" />
-          <EntitySet Name="templates_tasks" EntityType="Self.templates_tasks" />
-          <EntitySet Name="types_alerts" EntityType="Self.types_alerts" />
-          <EntitySet Name="units" EntityType="Self.units" />
-          <EntitySet Name="users" EntityType="Self.users" />
-          <AssociationSet Name="fk_a_task_id" Association="Self.fk_a_task_id">
-            <End Role="tasks" EntitySet="tasks" />
-            <End Role="alerts" EntitySet="alerts" />
-          </AssociationSet>
-          <AssociationSet Name="fk_a_type_alert_id" Association="Self.fk_a_type_alert_id">
-            <End Role="types_alerts" EntitySet="types_alerts" />
-            <End Role="alerts" EntitySet="alerts" />
-          </AssociationSet>
-          <AssociationSet Name="fk_u_enterprise_id" Association="Self.fk_u_enterprise_id">
-            <End Role="enterprises" EntitySet="enterprises" />
-            <End Role="users" EntitySet="users" />
-          </AssociationSet>
-          <AssociationSet Name="fk_f_task_id" Association="Self.fk_f_task_id">
-            <End Role="tasks" EntitySet="tasks" />
-            <End Role="files" EntitySet="files" />
-          </AssociationSet>
-          <AssociationSet Name="fk_lat_task_id" Association="Self.fk_lat_task_id">
-            <End Role="tasks" EntitySet="tasks" />
-            <End Role="log_assing_task" EntitySet="log_assing_task" />
-          </AssociationSet>
-          <AssociationSet Name="fk_lat_user_id" Association="Self.fk_lat_user_id">
-            <End Role="users" EntitySet="users" />
-            <End Role="log_assing_task" EntitySet="log_assing_task" />
-          </AssociationSet>
-          <AssociationSet Name="fk_lt_task_id" Association="Self.fk_lt_task_id">
-            <End Role="tasks" EntitySet="tasks" />
-            <End Role="log_task" EntitySet="log_task" />
-          </AssociationSet>
-          <AssociationSet Name="fk_lt_task_status_id" Association="Self.fk_lt_task_status_id">
-            <End Role="task_statuses" EntitySet="task_statuses" />
-            <End Role="log_task" EntitySet="log_task" />
-          </AssociationSet>
-          <AssociationSet Name="fk_lt_user_id" Association="Self.fk_lt_user_id">
-            <End Role="users" EntitySet="users" />
-            <End Role="log_task" EntitySet="log_task" />
-          </AssociationSet>
-          <AssociationSet Name="fk_m_task_id" Association="Self.fk_m_task_id">
-            <End Role="tasks" EntitySet="tasks" />
-            <End Role="messages" EntitySet="messages" />
-          </AssociationSet>
-          <AssociationSet Name="fk_m_user_id" Association="Self.fk_m_user_id">
-            <End Role="users" EntitySet="users" />
-            <End Role="messages" EntitySet="messages" />
-          </AssociationSet>
-          <AssociationSet Name="fk_rm_module_id" Association="Self.fk_rm_module_id">
-            <End Role="modules" EntitySet="modules" />
-            <End Role="roles_modules" EntitySet="roles_modules" />
-          </AssociationSet>
-          <AssociationSet Name="fk_rm_rol_id" Association="Self.fk_rm_rol_id">
-            <End Role="roles" EntitySet="roles" />
-            <End Role="roles_modules" EntitySet="roles_modules" />
-          </AssociationSet>
-          <AssociationSet Name="fk_u_rol_id" Association="Self.fk_u_rol_id">
-            <End Role="roles" EntitySet="roles" />
-            <End Role="users" EntitySet="users" />
-          </AssociationSet>
-          <AssociationSet Name="fk_t_user_id" Association="Self.fk_t_user_id">
-            <End Role="users" EntitySet="users" />
-            <End Role="tasks" EntitySet="tasks" />
-          </AssociationSet>
-          <AssociationSet Name="fk_tr_first_task_id" Association="Self.fk_tr_first_task_id">
-            <End Role="tasks" EntitySet="tasks" />
-            <End Role="tasks_relations" EntitySet="tasks_relations" />
-          </AssociationSet>
-          <AssociationSet Name="fk_tr_second_task_id" Association="Self.fk_tr_second_task_id">
-            <End Role="tasks" EntitySet="tasks" />
-            <End Role="tasks_relations" EntitySet="tasks_relations" />
-          </AssociationSet>
-          <AssociationSet Name="fk_tt_template_id" Association="Self.fk_tt_template_id">
-            <End Role="templates" EntitySet="templates" />
-            <End Role="templates_tasks" EntitySet="templates_tasks" />
-          </AssociationSet>
-          <AssociationSet Name="fk_u_boss" Association="Self.fk_u_boss">
-            <End Role="users" EntitySet="users" />
-            <End Role="units" EntitySet="units" />
-          </AssociationSet>
-          <AssociationSet Name="fk_u_unit_id" Association="Self.fk_u_unit_id">
-            <End Role="units" EntitySet="units" />
-            <End Role="users" EntitySet="users" />
-          </AssociationSet>
-        </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="db_modelStoreContainer" CdmEntityContainer="db">
+        <EntityContainerMapping StorageEntityContainer="db_modelStoreContainer" CdmEntityContainer="db_entities">
+          <FunctionImportMapping FunctionImportName="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" FunctionName="db_model.Store.SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_ENTERPRISE_INSERT" FunctionName="db_model.Store.SP_ENTERPRISE_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_ENTERPRISE_UPDATE" FunctionName="db_model.Store.SP_ENTERPRISE_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_ROL_INSERT" FunctionName="db_model.Store.SP_ROL_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_ROL_MODULE_INSERT" FunctionName="db_model.Store.SP_ROL_MODULE_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_ROL_UPDATE" FunctionName="db_model.Store.SP_ROL_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_UNIT_INSERT" FunctionName="db_model.Store.SP_UNIT_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_UNIT_UPDATE" FunctionName="db_model.Store.SP_UNIT_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_USER_INSERT" FunctionName="db_model.Store.SP_USER_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_USER_UPDATE_WITHOUT_PASSWORD" FunctionName="db_model.Store.SP_USER_UPDATE_WITHOUT_PASSWORD" />
+          <FunctionImportMapping FunctionImportName="SP_USER_UPDATE_WITH_PASSWORD" FunctionName="db_model.Store.SP_USER_UPDATE_WITH_PASSWORD" />
           <EntitySetMapping Name="alerts">
             <EntityTypeMapping TypeName="db_model.alerts">
               <MappingFragment StoreEntitySet="alerts">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="message" ColumnName="message" />
-                <ScalarProperty Name="type_alert_id" ColumnName="type_alert_id" />
-                <ScalarProperty Name="task_id" ColumnName="task_id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+                <ScalarProperty Name="type_alert_id" ColumnName="type_alert_id" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="config_devices">
             <EntityTypeMapping TypeName="db_model.config_devices">
               <MappingFragment StoreEntitySet="config_devices">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="model" ColumnName="model" />
-                <ScalarProperty Name="brand" ColumnName="brand" />
-                <ScalarProperty Name="unique_id" ColumnName="unique_id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="unique_id" ColumnName="unique_id" />
+                <ScalarProperty Name="brand" ColumnName="brand" />
+                <ScalarProperty Name="model" ColumnName="model" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="config_traffic_lights">
             <EntityTypeMapping TypeName="db_model.config_traffic_lights">
               <MappingFragment StoreEntitySet="config_traffic_lights">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="green" ColumnName="green" />
-                <ScalarProperty Name="yellow" ColumnName="yellow" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="state" ColumnName="state" />
                 <ScalarProperty Name="red" ColumnName="red" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="yellow" ColumnName="yellow" />
+                <ScalarProperty Name="green" ColumnName="green" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="enterprises">
             <EntityTypeMapping TypeName="db_model.enterprises">
               <MappingFragment StoreEntitySet="enterprises">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="state" ColumnName="state" />
                 <ScalarProperty Name="update_at" ColumnName="update_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="files">
             <EntityTypeMapping TypeName="db_model.files">
               <MappingFragment StoreEntitySet="files">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="task_id" ColumnName="task_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="url" ColumnName="url" />
-                <ScalarProperty Name="path" ColumnName="path" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="path" ColumnName="path" />
+                <ScalarProperty Name="url" ColumnName="url" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="log_assing_task">
             <EntityTypeMapping TypeName="db_model.log_assing_task">
               <MappingFragment StoreEntitySet="log_assing_task">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="accept" ColumnName="accept" />
-                <ScalarProperty Name="message" ColumnName="message" />
-                <ScalarProperty Name="user_id" ColumnName="user_id" />
-                <ScalarProperty Name="task_id" ColumnName="task_id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="accept" ColumnName="accept" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="log_task">
             <EntityTypeMapping TypeName="db_model.log_task">
               <MappingFragment StoreEntitySet="log_task">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="task_id" ColumnName="task_id" />
-                <ScalarProperty Name="task_status_id" ColumnName="task_status_id" />
-                <ScalarProperty Name="user_id" ColumnName="user_id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="task_status_code" ColumnName="task_status_code" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="user_id" ColumnName="user_id" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="messages">
             <EntityTypeMapping TypeName="db_model.messages">
               <MappingFragment StoreEntitySet="messages">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="message" ColumnName="message" />
-                <ScalarProperty Name="userd_id" ColumnName="userd_id" />
-                <ScalarProperty Name="task_id" ColumnName="task_id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="task_id" ColumnName="task_id" />
+                <ScalarProperty Name="userd_id" ColumnName="userd_id" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="modules">
             <EntityTypeMapping TypeName="db_model.modules">
               <MappingFragment StoreEntitySet="modules">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="process">
+            <EntityTypeMapping TypeName="db_model.process">
+              <MappingFragment StoreEntitySet="process">
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="roles">
             <EntityTypeMapping TypeName="db_model.roles">
               <MappingFragment StoreEntitySet="roles">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="roles_modules">
             <EntityTypeMapping TypeName="db_model.roles_modules">
               <MappingFragment StoreEntitySet="roles_modules">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="rol_id" ColumnName="rol_id" />
                 <ScalarProperty Name="module_id" ColumnName="module_id" />
+                <ScalarProperty Name="rol_id" ColumnName="rol_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="task_statuses">
             <EntityTypeMapping TypeName="db_model.task_statuses">
               <MappingFragment StoreEntitySet="task_statuses">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="code" ColumnName="code" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="code" ColumnName="code" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tasks">
             <EntityTypeMapping TypeName="db_model.tasks">
               <MappingFragment StoreEntitySet="tasks">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="creator_user_id" ColumnName="creator_user_id" />
-                <ScalarProperty Name="date_start" ColumnName="date_start" />
-                <ScalarProperty Name="date_end" ColumnName="date_end" />
-                <ScalarProperty Name="task_status" ColumnName="task_status" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="process_id" ColumnName="process_id" />
                 <ScalarProperty Name="father_taks_id" ColumnName="father_taks_id" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="task_status" ColumnName="task_status" />
+                <ScalarProperty Name="date_end" ColumnName="date_end" />
+                <ScalarProperty Name="date_start" ColumnName="date_start" />
+                <ScalarProperty Name="creator_user_id" ColumnName="creator_user_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="tasks_relations">
             <EntityTypeMapping TypeName="db_model.tasks_relations">
               <MappingFragment StoreEntitySet="tasks_relations">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="first_task_id" ColumnName="first_task_id" />
-                <ScalarProperty Name="second_task_id" ColumnName="second_task_id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="second_task_id" ColumnName="second_task_id" />
+                <ScalarProperty Name="first_task_id" ColumnName="first_task_id" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="templates">
             <EntityTypeMapping TypeName="db_model.templates">
               <MappingFragment StoreEntitySet="templates">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="description" ColumnName="description" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="templates_tasks">
             <EntityTypeMapping TypeName="db_model.templates_tasks">
               <MappingFragment StoreEntitySet="templates_tasks">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="date_start" ColumnName="date_start" />
-                <ScalarProperty Name="date_end" ColumnName="date_end" />
-                <ScalarProperty Name="task_status" ColumnName="task_status" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="task_status_code" ColumnName="task_status_code" />
                 <ScalarProperty Name="template_id" ColumnName="template_id" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="date_end" ColumnName="date_end" />
+                <ScalarProperty Name="date_start" ColumnName="date_start" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="types_alerts">
             <EntityTypeMapping TypeName="db_model.types_alerts">
               <MappingFragment StoreEntitySet="types_alerts">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="units">
             <EntityTypeMapping TypeName="db_model.units">
               <MappingFragment StoreEntitySet="units">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="state" ColumnName="state" />
                 <ScalarProperty Name="boss" ColumnName="boss" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="users">
             <EntityTypeMapping TypeName="db_model.users">
               <MappingFragment StoreEntitySet="users">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="email" ColumnName="email" />
-                <ScalarProperty Name="password" ColumnName="password" />
-                <ScalarProperty Name="rol_id" ColumnName="rol_id" />
-                <ScalarProperty Name="unit_id" ColumnName="unit_id" />
-                <ScalarProperty Name="created_at" ColumnName="created_at" />
-                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
-                <ScalarProperty Name="state" ColumnName="state" />
-                <ScalarProperty Name="token_session" ColumnName="token_session" />
                 <ScalarProperty Name="enterprise_id" ColumnName="enterprise_id" />
+                <ScalarProperty Name="token_session" ColumnName="token_session" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="unit_id" ColumnName="unit_id" />
+                <ScalarProperty Name="rol_id" ColumnName="rol_id" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_UPDATE" FunctionName="db_model.Store.SP_TEMPLATE_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_TASK_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_TASK_INSERT" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

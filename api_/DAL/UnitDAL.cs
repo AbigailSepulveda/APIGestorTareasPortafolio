@@ -1,4 +1,5 @@
 ﻿using api_.DB;
+using api_.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace api_.DAL {
          * @return true si existe
          */
         public static bool exists(String name) {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     var result = conn.units.Where(x => x.name.Equals(name)).FirstOrDefault();
                     return result != null;
@@ -28,15 +29,10 @@ namespace api_.DAL {
         /**
          * Método para crear nuevo registro
          */
-        public static void insert(String name) {
-            using (var conn = new db()) {
+        public static void insert(String name, decimal boss) {
+            using (var conn = new db_entities()) {
                 try {
-                    units entity = new units();
-                    entity.name = name;
-                    entity.created_at = DateTime.Now;
-                    entity.state = 1;
-                    conn.units.Add(entity);
-                    conn.SaveChanges();
+                    conn.SP_UNIT_INSERT(name, DateTime.Now, 1, boss);
                 } catch (Exception e) {
                     throw e;
                 }
@@ -46,14 +42,15 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name, decimal? state) {
-            using (var conn = new db()) {
+        public static void update(decimal id, String name, decimal state, decimal boss) {
+            using (var conn = new db_entities()) {
                 try {
                     var entity = conn.units.Where(x => x.id == id).FirstOrDefault();
-                    entity.name = name;
-                    entity.state = state;
-                    entity.updated_at = DateTime.Now;
-                    conn.SaveChanges();
+                    if (entity == null) {
+                        throw new NotExistsException();
+                    } else {
+                        conn.SP_UNIT_UPDATE(id, name, DateTime.Now, state, boss);
+                    }
                 } catch (Exception e) {
                     throw e;
                 }
@@ -64,7 +61,7 @@ namespace api_.DAL {
          * Método para devolver lista de los registros
          */
         public static List<units> fetchAll() {
-            using (var conn = new db()) {
+            using (var conn = new db_entities()) {
                 try {
                     return conn.units.ToList();
                 } catch (Exception e) {

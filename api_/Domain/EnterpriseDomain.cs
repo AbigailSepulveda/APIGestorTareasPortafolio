@@ -20,6 +20,7 @@ namespace api_.Domain {
                 return EnterpriseDAL.fetchAll().Select(x => new Enterprise {
                     id = int.Parse(x.id + ""),
                     name = x.name,
+                    state = int.Parse(x.state+"")
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -44,9 +45,9 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(long id, String name) {
+        public static void update(long id, String name, int state) {
             try {
-                EnterpriseDAL.update(id, name);
+                EnterpriseDAL.update(id, name, state);
             } catch (Exception e) {
                 throw e;
             }

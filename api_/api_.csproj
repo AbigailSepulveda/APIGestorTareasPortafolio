@@ -164,6 +164,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Controllers\RolController.cs" />
     <Compile Include="Controllers\ModuleController.cs" />
     <Compile Include="Controllers\EnterpriseController.cs" />
@@ -174,6 +175,8 @@
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\TypeAlertController.cs" />
     <Compile Include="DAL\ConfigTrafficLightDAL.cs" />
+    <Compile Include="DAL\TemplateTaskDAL.cs" />
+    <Compile Include="DAL\TemplateDAL.cs" />
     <Compile Include="DAL\EnterpriseDAL.cs" />
     <Compile Include="DAL\ModuleDAL.cs" />
     <Compile Include="DAL\RolModuleDAL.cs" />
@@ -224,6 +227,9 @@
     <Compile Include="DB\modules.cs">
       <DependentUpon>db_portafolio.tt</DependentUpon>
     </Compile>
+    <Compile Include="DB\process.cs">
+      <DependentUpon>db_portafolio.tt</DependentUpon>
+    </Compile>
     <Compile Include="DB\roles.cs">
       <DependentUpon>db_portafolio.tt</DependentUpon>
     </Compile>
@@ -260,10 +266,12 @@
     <Compile Include="Domain\RolDomain.cs" />
     <Compile Include="Domain\TaskStatusDomain.cs" />
     <Compile Include="Domain\TypeAlertDomain.cs" />
+    <Compile Include="Domain\TemplateDomain.cs" />
     <Compile Include="Domain\UserDomain.cs" />
     <Compile Include="Domain\UnitDomain.cs" />
     <Compile Include="Exceptions\ExistsException.cs" />
     <Compile Include="Exceptions\AuthenticationException.cs" />
+    <Compile Include="Exceptions\NotExistsException.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -272,11 +280,14 @@
     <Compile Include="Models\Module.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\TaskStatus.cs" />
+    <Compile Include="Models\TemplateTask.cs" />
     <Compile Include="Models\TypeAlert.cs" />
+    <Compile Include="Models\Template.cs" />
     <Compile Include="Models\Unit.cs" />
     <Compile Include="Models\UserLogin.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Request\RolUpdateRequest.cs" />
     <Compile Include="Request\RolInsertRequest.cs" />
   </ItemGroup>
   <ItemGroup>
