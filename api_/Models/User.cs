@@ -11,9 +11,7 @@ namespace api_.Models {
         public DateTime created_at { get; set; }
         public DateTime updated_at { get; set; }
         public String token_session { get; set; }
-        public long enterprise_id { get; set; }
         public Rol rol { get; set; }
-        public Enterprise enterprise { get; set; }
         public Unit unit { get; set; }
         public int state { get; set; }
     }

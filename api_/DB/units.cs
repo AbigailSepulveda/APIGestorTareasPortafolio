@@ -25,7 +25,9 @@ namespace api_.DB
         public Nullable<System.DateTime> updated_at { get; set; }
         public Nullable<decimal> state { get; set; }
         public Nullable<decimal> boss { get; set; }
+        public Nullable<decimal> enterprise_id { get; set; }
     
+        public virtual enterprises enterprises { get; set; }
         public virtual ICollection<users> users { get; set; }
     }
 }

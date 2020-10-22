@@ -66,7 +66,27 @@ namespace api_.DAL {
         }
 
         /**
-         * Método para actualizar el registro
+         * Método para iniciar sesion desde el telefono
+         */
+        public static users signInMovil(String email, String pass, String token) {
+            using (var conn = new db_entities()) {
+                try {
+                    var entity = conn.users.Where(x => x.email == email && x.password == pass && x.rol_id == 0).FirstOrDefault();
+                    if (entity != null) {
+                        entity.token_session = token;
+                        conn.SaveChanges();
+                        return entity;
+                    } else {
+                        throw new NotFoundException();
+                    }
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
+
+        /**
+         * Método para iniciar sesion desde la web
          */
         public static users signIn(String email, String pass, String token) {
             using (var conn = new db_entities()) {

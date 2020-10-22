@@ -73,5 +73,19 @@ namespace api_.Controllers {
                 }
             }
         }
+
+        [Route("signIn")]
+        [HttpPost]
+        public HttpResponseMessage signIn(User user) {
+            try {
+                return response(HttpStatusCode.OK, true, "ready", UserDomain.signIn(user.email, user.password));
+            } catch (Exception e) {
+                if (e is NotFoundException) {
+                    return response(HttpStatusCode.Unauthorized, false, e);
+                } else {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            }
+        }
     }
 }

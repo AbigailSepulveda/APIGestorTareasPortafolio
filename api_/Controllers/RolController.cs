@@ -1,5 +1,5 @@
 ﻿using api_.Domain;
-using api_.Request;
+using api_.Models;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -29,10 +29,10 @@ namespace api_.Controllers {
 
         [Route("insert")]
         [HttpPost]
-        public HttpResponseMessage insert(RolInsertRequest request) {
+        public HttpResponseMessage insert(Rol rol) {
             if (checkToken(Request)) {
                 try {
-                    RolDomain.insert(request.name, request.modules);
+                    RolDomain.insert(rol);
                     return response(HttpStatusCode.OK, true, "ready");
                 } catch (Exception e) {
                     return response(HttpStatusCode.InternalServerError, false, e);
@@ -44,10 +44,10 @@ namespace api_.Controllers {
 
         [Route("update")]
         [HttpPost]
-        public HttpResponseMessage update(RolUpdateRequest request) {
+        public HttpResponseMessage update(Rol rol) {
             if (checkToken(Request)) {
                 try {
-                    RolDomain.update(request.id, request.name, request.state, request.modules);
+                    RolDomain.update(rol);
                     return response(HttpStatusCode.OK, true, "ready");
                 } catch (Exception e) {
                     return response(HttpStatusCode.InternalServerError, false, e);

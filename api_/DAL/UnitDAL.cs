@@ -29,10 +29,10 @@ namespace api_.DAL {
         /**
          * Método para crear nuevo registro
          */
-        public static void insert(String name, decimal boss) {
+        public static void insert(String name, decimal? boss, decimal? enterprise_id) {
             using (var conn = new db_entities()) {
                 try {
-                    conn.SP_UNIT_INSERT(name, DateTime.Now, 1, boss);
+                    conn.SP_UNIT_INSERT(name, DateTime.Now, 1, boss, enterprise_id);
                 } catch (Exception e) {
                     throw e;
                 }
@@ -42,14 +42,14 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name, decimal state, decimal boss) {
+        public static void update(decimal id, String name, decimal state, decimal? boss, decimal? enterprise_id) {
             using (var conn = new db_entities()) {
                 try {
                     var entity = conn.units.Where(x => x.id == id).FirstOrDefault();
                     if (entity == null) {
                         throw new NotExistsException();
                     } else {
-                        conn.SP_UNIT_UPDATE(id, name, DateTime.Now, state, boss);
+                        conn.SP_UNIT_UPDATE(id, name, DateTime.Now, state, boss, enterprise_id);
                     }
                 } catch (Exception e) {
                     throw e;

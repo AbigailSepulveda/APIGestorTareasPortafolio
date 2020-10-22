@@ -29,14 +29,14 @@ namespace api_.DAL {
         /**
          * Método para crear nuevo registro
          */
-        public static void insert(String name, List<long> modules) {
+        public static void insert(String name, List<modules> modules) {
             using (var conn = new db_entities()) {
                 try {
                     conn.SP_ROL_INSERT(name, DateTime.Now, 1);
                     var entity = conn.roles.Where(x => x.name == name).FirstOrDefault();
                     if (modules != null) {
-                        foreach (long item in modules) {
-                            conn.SP_ROL_MODULE_INSERT(entity.id, item);
+                        foreach (modules item in modules) {
+                            conn.SP_ROL_MODULE_INSERT(entity.id, item.id);
                         }
                     }
                 } catch (Exception e) {
@@ -48,7 +48,7 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name, int state, List<long> modules) {
+        public static void update(decimal id, String name, int state, List<modules> modules) {
             using (var conn = new db_entities()) {
                 try {
                     var entity = conn.roles.Where(x => x.id == id).FirstOrDefault();
@@ -62,10 +62,11 @@ namespace api_.DAL {
                         foreach (roles_modules rm in conn.roles_modules.Where(x => x.rol_id == entity.id).ToList()) {
                             conn.roles_modules.Remove(rm);
                         }
+                        conn.SaveChanges();
 
                         // agregamos las actualizaciones
-                        foreach (long item in modules) {
-                            conn.SP_ROL_MODULE_INSERT(entity.id, item);
+                        foreach (modules item in modules) {
+                            conn.SP_ROL_MODULE_INSERT(entity.id, item.id);
                         }
                     }
                 } catch (Exception e) {

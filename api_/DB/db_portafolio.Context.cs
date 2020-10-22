@@ -29,7 +29,6 @@ namespace api_.DB
         }
     
         public DbSet<alerts> alerts { get; set; }
-        public DbSet<config_devices> config_devices { get; set; }
         public DbSet<config_traffic_lights> config_traffic_lights { get; set; }
         public DbSet<enterprises> enterprises { get; set; }
         public DbSet<files> files { get; set; }
@@ -72,44 +71,6 @@ namespace api_.DB
                 new ObjectParameter("P_UPDATED_AT", typeof(System.DateTime));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_CONFIG_TRAFFIC_LIGHTS_UPDATE", p_IDParameter, p_GREENParameter, p_YELLOWParameter, p_REDParameter, p_UPDATED_ATParameter);
-        }
-    
-        public virtual int SP_ENTERPRISE_INSERT(string p_NAME, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE)
-        {
-            var p_NAMEParameter = p_NAME != null ?
-                new ObjectParameter("P_NAME", p_NAME) :
-                new ObjectParameter("P_NAME", typeof(string));
-    
-            var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
-                new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
-                new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
-    
-            var p_STATEParameter = p_STATE.HasValue ?
-                new ObjectParameter("P_STATE", p_STATE) :
-                new ObjectParameter("P_STATE", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ENTERPRISE_INSERT", p_NAMEParameter, p_CREATE_ATParameter, p_STATEParameter);
-        }
-    
-        public virtual int SP_ENTERPRISE_UPDATE(Nullable<decimal> p_ID, string p_NAME, Nullable<System.DateTime> p_UPDATE_AT, Nullable<decimal> p_STATE)
-        {
-            var p_IDParameter = p_ID.HasValue ?
-                new ObjectParameter("P_ID", p_ID) :
-                new ObjectParameter("P_ID", typeof(decimal));
-    
-            var p_NAMEParameter = p_NAME != null ?
-                new ObjectParameter("P_NAME", p_NAME) :
-                new ObjectParameter("P_NAME", typeof(string));
-    
-            var p_UPDATE_ATParameter = p_UPDATE_AT.HasValue ?
-                new ObjectParameter("P_UPDATE_AT", p_UPDATE_AT) :
-                new ObjectParameter("P_UPDATE_AT", typeof(System.DateTime));
-    
-            var p_STATEParameter = p_STATE.HasValue ?
-                new ObjectParameter("P_STATE", p_STATE) :
-                new ObjectParameter("P_STATE", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ENTERPRISE_UPDATE", p_IDParameter, p_NAMEParameter, p_UPDATE_ATParameter, p_STATEParameter);
         }
     
         public virtual int SP_ROL_INSERT(string p_NAME, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE)
@@ -163,11 +124,15 @@ namespace api_.DB
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ROL_UPDATE", p_IDParameter, p_NAMEParameter, p_UPDATE_ATParameter, p_STATEParameter);
         }
     
-        public virtual int SP_UNIT_INSERT(string p_NAME, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_BOSS)
+        public virtual int SP_TEMPLATE_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE)
         {
             var p_NAMEParameter = p_NAME != null ?
                 new ObjectParameter("P_NAME", p_NAME) :
                 new ObjectParameter("P_NAME", typeof(string));
+    
+            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
+                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
+                new ObjectParameter("P_DESCRIPTION", typeof(string));
     
             var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
                 new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
@@ -177,14 +142,60 @@ namespace api_.DB
                 new ObjectParameter("P_STATE", p_STATE) :
                 new ObjectParameter("P_STATE", typeof(decimal));
     
-            var p_BOSSParameter = p_BOSS.HasValue ?
-                new ObjectParameter("P_BOSS", p_BOSS) :
-                new ObjectParameter("P_BOSS", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UNIT_INSERT", p_NAMEParameter, p_CREATE_ATParameter, p_STATEParameter, p_BOSSParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_CREATE_ATParameter, p_STATEParameter);
         }
     
-        public virtual int SP_UNIT_UPDATE(Nullable<decimal> p_ID, string p_NAME, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_BOSS)
+        public virtual int SP_TEMPLATE_TASK_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<decimal> p_TEMPLATE_ID, string p_TASK_STATUS_CODE, Nullable<System.DateTime> p_CREATE_AT)
+        {
+            var p_NAMEParameter = p_NAME != null ?
+                new ObjectParameter("P_NAME", p_NAME) :
+                new ObjectParameter("P_NAME", typeof(string));
+    
+            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
+                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
+                new ObjectParameter("P_DESCRIPTION", typeof(string));
+    
+            var p_TEMPLATE_IDParameter = p_TEMPLATE_ID.HasValue ?
+                new ObjectParameter("P_TEMPLATE_ID", p_TEMPLATE_ID) :
+                new ObjectParameter("P_TEMPLATE_ID", typeof(decimal));
+    
+            var p_TASK_STATUS_CODEParameter = p_TASK_STATUS_CODE != null ?
+                new ObjectParameter("P_TASK_STATUS_CODE", p_TASK_STATUS_CODE) :
+                new ObjectParameter("P_TASK_STATUS_CODE", typeof(string));
+    
+            var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
+                new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
+                new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_TASK_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_TEMPLATE_IDParameter, p_TASK_STATUS_CODEParameter, p_CREATE_ATParameter);
+        }
+    
+        public virtual int SP_TEMPLATE_UPDATE(Nullable<decimal> p_ID, string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE)
+        {
+            var p_IDParameter = p_ID.HasValue ?
+                new ObjectParameter("P_ID", p_ID) :
+                new ObjectParameter("P_ID", typeof(decimal));
+    
+            var p_NAMEParameter = p_NAME != null ?
+                new ObjectParameter("P_NAME", p_NAME) :
+                new ObjectParameter("P_NAME", typeof(string));
+    
+            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
+                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
+                new ObjectParameter("P_DESCRIPTION", typeof(string));
+    
+            var p_UPDATED_ATParameter = p_UPDATED_AT.HasValue ?
+                new ObjectParameter("P_UPDATED_AT", p_UPDATED_AT) :
+                new ObjectParameter("P_UPDATED_AT", typeof(System.DateTime));
+    
+            var p_STATEParameter = p_STATE.HasValue ?
+                new ObjectParameter("P_STATE", p_STATE) :
+                new ObjectParameter("P_STATE", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_UPDATE", p_IDParameter, p_NAMEParameter, p_DESCRIPTIONParameter, p_UPDATED_ATParameter, p_STATEParameter);
+        }
+    
+        public virtual int SP_UNIT_UPDATE(Nullable<decimal> p_ID, string p_NAME, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_BOSS, Nullable<decimal> p_ENTERPRISE_ID)
         {
             var p_IDParameter = p_ID.HasValue ?
                 new ObjectParameter("P_ID", p_ID) :
@@ -206,10 +217,14 @@ namespace api_.DB
                 new ObjectParameter("P_BOSS", p_BOSS) :
                 new ObjectParameter("P_BOSS", typeof(decimal));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UNIT_UPDATE", p_IDParameter, p_NAMEParameter, p_UPDATED_ATParameter, p_STATEParameter, p_BOSSParameter);
+            var p_ENTERPRISE_IDParameter = p_ENTERPRISE_ID.HasValue ?
+                new ObjectParameter("P_ENTERPRISE_ID", p_ENTERPRISE_ID) :
+                new ObjectParameter("P_ENTERPRISE_ID", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UNIT_UPDATE", p_IDParameter, p_NAMEParameter, p_UPDATED_ATParameter, p_STATEParameter, p_BOSSParameter, p_ENTERPRISE_IDParameter);
         }
     
-        public virtual int SP_USER_INSERT(string p_NAME, string p_EMAIL, string p_PASSWORD, Nullable<decimal> p_ROL_ID, Nullable<decimal> p_UNIT_ID, Nullable<System.DateTime> p_CREATED_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_ENTERPRISE_ID)
+        public virtual int SP_USER_INSERT(string p_NAME, string p_EMAIL, string p_PASSWORD, Nullable<decimal> p_ROL_ID, Nullable<decimal> p_UNIT_ID, Nullable<System.DateTime> p_CREATED_AT, Nullable<decimal> p_STATE)
         {
             var p_NAMEParameter = p_NAME != null ?
                 new ObjectParameter("P_NAME", p_NAME) :
@@ -239,14 +254,10 @@ namespace api_.DB
                 new ObjectParameter("P_STATE", p_STATE) :
                 new ObjectParameter("P_STATE", typeof(decimal));
     
-            var p_ENTERPRISE_IDParameter = p_ENTERPRISE_ID.HasValue ?
-                new ObjectParameter("P_ENTERPRISE_ID", p_ENTERPRISE_ID) :
-                new ObjectParameter("P_ENTERPRISE_ID", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_INSERT", p_NAMEParameter, p_EMAILParameter, p_PASSWORDParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_CREATED_ATParameter, p_STATEParameter, p_ENTERPRISE_IDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_INSERT", p_NAMEParameter, p_EMAILParameter, p_PASSWORDParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_CREATED_ATParameter, p_STATEParameter);
         }
     
-        public virtual int SP_USER_UPDATE_WITHOUT_PASSWORD(Nullable<decimal> p_ID, string p_NAME, string p_EMAIL, Nullable<decimal> p_ROL_ID, Nullable<decimal> p_UNIT_ID, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_ENTERPRISE_ID)
+        public virtual int SP_USER_UPDATE_WITHOUT_PASSWORD(Nullable<decimal> p_ID, string p_NAME, string p_EMAIL, Nullable<decimal> p_ROL_ID, Nullable<decimal> p_UNIT_ID, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE)
         {
             var p_IDParameter = p_ID.HasValue ?
                 new ObjectParameter("P_ID", p_ID) :
@@ -276,14 +287,10 @@ namespace api_.DB
                 new ObjectParameter("P_STATE", p_STATE) :
                 new ObjectParameter("P_STATE", typeof(decimal));
     
-            var p_ENTERPRISE_IDParameter = p_ENTERPRISE_ID.HasValue ?
-                new ObjectParameter("P_ENTERPRISE_ID", p_ENTERPRISE_ID) :
-                new ObjectParameter("P_ENTERPRISE_ID", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_UPDATE_WITHOUT_PASSWORD", p_IDParameter, p_NAMEParameter, p_EMAILParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_UPDATED_ATParameter, p_STATEParameter, p_ENTERPRISE_IDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_UPDATE_WITHOUT_PASSWORD", p_IDParameter, p_NAMEParameter, p_EMAILParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_UPDATED_ATParameter, p_STATEParameter);
         }
     
-        public virtual int SP_USER_UPDATE_WITH_PASSWORD(Nullable<decimal> p_ID, string p_NAME, string p_EMAIL, string p_PASSWORD, Nullable<decimal> p_ROL_ID, Nullable<decimal> p_UNIT_ID, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_ENTERPRISE_ID)
+        public virtual int SP_USER_UPDATE_WITH_PASSWORD(Nullable<decimal> p_ID, string p_NAME, string p_EMAIL, string p_PASSWORD, Nullable<decimal> p_ROL_ID, Nullable<decimal> p_UNIT_ID, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE)
         {
             var p_IDParameter = p_ID.HasValue ?
                 new ObjectParameter("P_ID", p_ID) :
@@ -317,22 +324,14 @@ namespace api_.DB
                 new ObjectParameter("P_STATE", p_STATE) :
                 new ObjectParameter("P_STATE", typeof(decimal));
     
-            var p_ENTERPRISE_IDParameter = p_ENTERPRISE_ID.HasValue ?
-                new ObjectParameter("P_ENTERPRISE_ID", p_ENTERPRISE_ID) :
-                new ObjectParameter("P_ENTERPRISE_ID", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_UPDATE_WITH_PASSWORD", p_IDParameter, p_NAMEParameter, p_EMAILParameter, p_PASSWORDParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_UPDATED_ATParameter, p_STATEParameter, p_ENTERPRISE_IDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_UPDATE_WITH_PASSWORD", p_IDParameter, p_NAMEParameter, p_EMAILParameter, p_PASSWORDParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_UPDATED_ATParameter, p_STATEParameter);
         }
     
-        public virtual int SP_TEMPLATE_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE)
+        public virtual int SP_ENTERPRISE_INSERT(string p_NAME, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE)
         {
             var p_NAMEParameter = p_NAME != null ?
                 new ObjectParameter("P_NAME", p_NAME) :
                 new ObjectParameter("P_NAME", typeof(string));
-    
-            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
-                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
-                new ObjectParameter("P_DESCRIPTION", typeof(string));
     
             var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
                 new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
@@ -342,10 +341,10 @@ namespace api_.DB
                 new ObjectParameter("P_STATE", p_STATE) :
                 new ObjectParameter("P_STATE", typeof(decimal));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_CREATE_ATParameter, p_STATEParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ENTERPRISE_INSERT", p_NAMEParameter, p_CREATE_ATParameter, p_STATEParameter);
         }
     
-        public virtual int SP_TEMPLATE_UPDATE(Nullable<decimal> p_ID, string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE)
+        public virtual int SP_ENTERPRISE_UPDATE(Nullable<decimal> p_ID, string p_NAME, Nullable<System.DateTime> p_UPDATE_AT, Nullable<decimal> p_STATE)
         {
             var p_IDParameter = p_ID.HasValue ?
                 new ObjectParameter("P_ID", p_ID) :
@@ -355,52 +354,40 @@ namespace api_.DB
                 new ObjectParameter("P_NAME", p_NAME) :
                 new ObjectParameter("P_NAME", typeof(string));
     
-            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
-                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
-                new ObjectParameter("P_DESCRIPTION", typeof(string));
-    
-            var p_UPDATED_ATParameter = p_UPDATED_AT.HasValue ?
-                new ObjectParameter("P_UPDATED_AT", p_UPDATED_AT) :
-                new ObjectParameter("P_UPDATED_AT", typeof(System.DateTime));
+            var p_UPDATE_ATParameter = p_UPDATE_AT.HasValue ?
+                new ObjectParameter("P_UPDATE_AT", p_UPDATE_AT) :
+                new ObjectParameter("P_UPDATE_AT", typeof(System.DateTime));
     
             var p_STATEParameter = p_STATE.HasValue ?
                 new ObjectParameter("P_STATE", p_STATE) :
                 new ObjectParameter("P_STATE", typeof(decimal));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_UPDATE", p_IDParameter, p_NAMEParameter, p_DESCRIPTIONParameter, p_UPDATED_ATParameter, p_STATEParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ENTERPRISE_UPDATE", p_IDParameter, p_NAMEParameter, p_UPDATE_ATParameter, p_STATEParameter);
         }
     
-        public virtual int SP_TEMPLATE_TASK_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_DATE_START, Nullable<System.DateTime> p_DATE_END, Nullable<decimal> p_TEMPLATE_ID, string p_TASK_STATUS_CODE, Nullable<System.DateTime> p_CREATE_AT)
+        public virtual int SP_UNIT_INSERT(string p_NAME, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_BOSS, Nullable<decimal> p_ENTERPRISE_ID)
         {
             var p_NAMEParameter = p_NAME != null ?
                 new ObjectParameter("P_NAME", p_NAME) :
                 new ObjectParameter("P_NAME", typeof(string));
     
-            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
-                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
-                new ObjectParameter("P_DESCRIPTION", typeof(string));
-    
-            var p_DATE_STARTParameter = p_DATE_START.HasValue ?
-                new ObjectParameter("P_DATE_START", p_DATE_START) :
-                new ObjectParameter("P_DATE_START", typeof(System.DateTime));
-    
-            var p_DATE_ENDParameter = p_DATE_END.HasValue ?
-                new ObjectParameter("P_DATE_END", p_DATE_END) :
-                new ObjectParameter("P_DATE_END", typeof(System.DateTime));
-    
-            var p_TEMPLATE_IDParameter = p_TEMPLATE_ID.HasValue ?
-                new ObjectParameter("P_TEMPLATE_ID", p_TEMPLATE_ID) :
-                new ObjectParameter("P_TEMPLATE_ID", typeof(decimal));
-    
-            var p_TASK_STATUS_CODEParameter = p_TASK_STATUS_CODE != null ?
-                new ObjectParameter("P_TASK_STATUS_CODE", p_TASK_STATUS_CODE) :
-                new ObjectParameter("P_TASK_STATUS_CODE", typeof(string));
-    
             var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
                 new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
                 new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_TASK_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_DATE_STARTParameter, p_DATE_ENDParameter, p_TEMPLATE_IDParameter, p_TASK_STATUS_CODEParameter, p_CREATE_ATParameter);
+            var p_STATEParameter = p_STATE.HasValue ?
+                new ObjectParameter("P_STATE", p_STATE) :
+                new ObjectParameter("P_STATE", typeof(decimal));
+    
+            var p_BOSSParameter = p_BOSS.HasValue ?
+                new ObjectParameter("P_BOSS", p_BOSS) :
+                new ObjectParameter("P_BOSS", typeof(decimal));
+    
+            var p_ENTERPRISE_IDParameter = p_ENTERPRISE_ID.HasValue ?
+                new ObjectParameter("P_ENTERPRISE_ID", p_ENTERPRISE_ID) :
+                new ObjectParameter("P_ENTERPRISE_ID", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_UNIT_INSERT", p_NAMEParameter, p_CREATE_ATParameter, p_STATEParameter, p_BOSSParameter, p_ENTERPRISE_IDParameter);
         }
     }
 }

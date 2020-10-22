@@ -15,8 +15,6 @@ namespace api_.DB
     public partial class templates_tasks
     {
         public decimal id { get; set; }
-        public Nullable<System.DateTime> date_start { get; set; }
-        public Nullable<System.DateTime> date_end { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
         public decimal template_id { get; set; }

@@ -34,7 +34,8 @@ namespace api_.Domain {
                            new Module() {
                                id = long.Parse(y.id + ""),
                                name = y.name,
-                               state = int.Parse(y.state + "")
+                               state = int.Parse(y.state + ""),
+                               code = y.code
                            }).FirstOrDefault();
                         modulesDomain.Add(md);
                     }
@@ -51,12 +52,17 @@ namespace api_.Domain {
         /**
          * Método para crear un nuevo registro
          */
-        public static void insert(String name, List<long> modules) {
+        public static void insert(Rol rol) {
             try {
-                if (RolDAL.exists(name)) {
+                if (RolDAL.exists(rol.name)) {
                     throw new ExistsException();
                 } else {
-                    RolDAL.insert(name, modules);
+                    List<modules> modules = rol.modules.Select(x => new modules() {
+                        id = x.id,
+                        name = x.name
+                    }).ToList();
+
+                    RolDAL.insert(rol.name, modules);
                 }
             } catch (Exception e) {
                 throw e;
@@ -66,9 +72,13 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(long id, String name, int state, List<long> modules) {
+        public static void update(Rol rol) {
             try {
-                RolDAL.update(id, name, state, modules);
+                List<modules> modules = rol.modules.Select(x => new modules() {
+                    id = x.id,
+                    name = x.name
+                }).ToList();
+                RolDAL.update(rol.id, rol.name, rol.state, modules);
             } catch (Exception e) {
                 throw e;
             }

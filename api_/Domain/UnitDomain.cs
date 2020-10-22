@@ -21,11 +21,16 @@ namespace api_.Domain {
                     id = long.Parse(x.id + ""),
                     name = x.name,
                     state = int.Parse(x.state + ""),
-                    boss_id = long.Parse(x.boss + ""),
-                    boss = UserDAL.fetchAll().Where(y => y.id == x.boss).Select(z => new User() {
+                    boss_id = x.boss == null ? null : x.boss,
+                    boss = x.boss == null ? null : UserDAL.fetchAll().Where(y => y.id == x.boss).Select(z => new User() {
                         id = long.Parse(z.id + ""),
                         name = z.name,
-                    }).FirstOrDefault()
+                    }).FirstOrDefault(),
+                    enterprise = x.enterprise_id == null ? null : EnterpriseDAL.fetchAll().Where(y => y.id == x.enterprise_id).Select(z => new Enterprise() {
+                        id = long.Parse(z.id + ""),
+                        name = z.name,
+                    }).FirstOrDefault(),
+                    enterprise_id = long.Parse(x.enterprise_id + "")
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -35,12 +40,12 @@ namespace api_.Domain {
         /**
          * Método para crear un nuevo registro
          */
-        public static void insert(String name, decimal boss) {
+        public static void insert(Unit unit) {
             try {
-                if (UnitDAL.exists(name)) {
+                if (UnitDAL.exists(unit.name)) {
                     throw new ExistsException();
                 } else {
-                    UnitDAL.insert(name, boss);
+                    UnitDAL.insert(unit.name, unit.boss, unit.enterprise_id);
                 }
             } catch (Exception e) {
                 throw e;
@@ -50,9 +55,9 @@ namespace api_.Domain {
         /**
          * Método para actualizar un nuevo registro
          */
-        public static void update(decimal id, String name, decimal state, decimal boss) {
+        public static void update(Unit unit) {
             try {
-                UnitDAL.update(id, name, state, boss);
+                UnitDAL.update(unit.id, unit.name, unit.state, unit.boss, unit.enterprise_id);
             } catch (Exception e) {
                 throw e;
             }

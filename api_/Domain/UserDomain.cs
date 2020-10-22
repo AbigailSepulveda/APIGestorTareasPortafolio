@@ -22,26 +22,20 @@ namespace api_.Domain {
                     id = long.Parse(x.id + ""),
                     name = x.name,
                     email = x.email,
-                    password = x.password,
-                    rol = RolDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Rol() {
+                    rol = x.rol_id == null ? null : RolDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Rol() {
                         id = long.Parse(z.id + ""),
                         name = z.name,
                         state = int.Parse(z.state + "")
                     }).FirstOrDefault(),
-                    unit = UnitDAL.fetchAll().Where(y => y.id == x.unit_id).Select(z => new Unit() {
+                    unit = x.unit_id == null ? null : UnitDAL.fetchAll().Where(y => y.id == x.unit_id).Select(z => new Unit() {
                         id = long.Parse(z.id + ""),
                         name = z.name,
                         state = int.Parse(z.state + "")
-                    }).FirstOrDefault(),
-                    enterprise = EnterpriseDAL.fetchAll().Where(y => y.id == x.enterprise_id).Select(z => new Enterprise() {
-                        id = long.Parse(z.id + ""),
-                        name = z.name,
                     }).FirstOrDefault(),
                     rol_id = long.Parse(x.rol_id + ""),
                     unit_id = long.Parse(x.unit_id + ""),
                     state = int.Parse(x.state + ""),
-                    token_session = x.token_session,
-                    enterprise_id = long.Parse(x.enterprise_id + "")
+                    token_session = x.token_session
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -64,7 +58,6 @@ namespace api_.Domain {
                     dalUser.password = encodeTo64(user.password);
                     dalUser.rol_id = user.rol_id;
                     dalUser.unit_id = user.unit_id;
-                    dalUser.enterprise_id = user.enterprise_id;
                     UserDAL.insert(dalUser);
                 }
             } catch (Exception e) {
@@ -81,12 +74,12 @@ namespace api_.Domain {
                 dalUser.id = user.id;
                 dalUser.name = user.name;
                 dalUser.email = user.email;
-                if (user.password != null || user.password != "") {
+                dalUser.state = user.state;
+                if (user.password != null && user.password != "") {
                     dalUser.password = encodeTo64(user.password);
                 }
                 dalUser.rol_id = user.rol_id;
                 dalUser.unit_id = user.unit_id;
-                dalUser.enterprise_id = user.enterprise_id;
                 UserDAL.update(dalUser);
             } catch (Exception e) {
                 throw e;
@@ -96,27 +89,67 @@ namespace api_.Domain {
         public static UserLogin signInMovil(String email, String password) {
             try {
                 String token = randomString();
+                var x = UserDAL.signInMovil(email, encodeTo64(password), token);
+                UserLogin user = new UserLogin();
+                user.id = long.Parse(x.id + "");
+                user.name = x.name;
+                user.email = x.email;
+                user.rol = x.rol_id == null ? null : RolDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Rol() {
+                    id = long.Parse(z.id + ""),
+                    name = z.name,
+                    state = int.Parse(z.state + "")
+                }).FirstOrDefault();
+                user.unit = x.unit_id == null ? null : UnitDAL.fetchAll().Where(y => y.id == x.unit_id).Select(z => new Unit() {
+                    id = long.Parse(z.id + ""),
+                    name = z.name,
+                    state = int.Parse(z.state + "")
+                }).FirstOrDefault();
+                user.state = int.Parse(x.state + "");
+                user.token_session = x.token_session;
+                return user;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static UserLogin signIn(String email, String password) {
+            try {
+                String token = randomString();
                 var x = UserDAL.signIn(email, encodeTo64(password), token);
                 UserLogin user = new UserLogin();
                 user.id = long.Parse(x.id + "");
                 user.name = x.name;
                 user.email = x.email;
-                user.rol = RolDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Rol() {
+                user.rol = x.rol_id == null ? null : RolDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Rol() {
                     id = long.Parse(z.id + ""),
                     name = z.name,
                     state = int.Parse(z.state + "")
                 }).FirstOrDefault();
-                user.unit = UnitDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Unit() {
+                user.unit = x.unit_id == null ? null : UnitDAL.fetchAll().Where(y => y.id == x.unit_id).Select(z => new Unit() {
                     id = long.Parse(z.id + ""),
                     name = z.name,
                     state = int.Parse(z.state + "")
-                }).FirstOrDefault();
-                user.enterprise = EnterpriseDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Enterprise() {
-                    id = long.Parse(z.id + ""),
-                    name = z.name,
                 }).FirstOrDefault();
                 user.state = int.Parse(x.state + "");
                 user.token_session = x.token_session;
+
+
+                List<Module> modulesDomain = new List<Module>();
+
+                var modules = RolModuleDAL.fetchAll().Where(rm => rm.rol_id == user.rol.id).ToList();
+                foreach (roles_modules rm in modules) {
+                    var md = ModuleDAL.fetchAll().Where(mo => mo.id == rm.module_id).Select(y =>
+                       new Module() {
+                           id = long.Parse(y.id + ""),
+                           name = y.name,
+                           state = int.Parse(y.state + ""),
+                           code = y.code
+                       }).FirstOrDefault();
+                    modulesDomain.Add(md);
+                }
+                user.rol.modules = modulesDomain;
+
+
                 return user;
             } catch (Exception e) {
                 throw e;

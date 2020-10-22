@@ -24,6 +24,7 @@ namespace api_.DB
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
         public Nullable<decimal> state { get; set; }
+        public string code { get; set; }
     
         public virtual ICollection<roles_modules> roles_modules { get; set; }
     }

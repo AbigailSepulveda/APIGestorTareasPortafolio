@@ -16,7 +16,7 @@ namespace api_.DB
     {
         public enterprises()
         {
-            this.users = new HashSet<users>();
+            this.units = new HashSet<units>();
         }
     
         public decimal id { get; set; }
@@ -25,6 +25,6 @@ namespace api_.DB
         public Nullable<System.DateTime> update_at { get; set; }
         public Nullable<short> state { get; set; }
     
-        public virtual ICollection<users> users { get; set; }
+        public virtual ICollection<units> units { get; set; }
     }
 }

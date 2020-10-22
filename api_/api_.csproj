@@ -188,9 +188,6 @@
     <Compile Include="DB\alerts.cs">
       <DependentUpon>db_portafolio.tt</DependentUpon>
     </Compile>
-    <Compile Include="DB\config_devices.cs">
-      <DependentUpon>db_portafolio.tt</DependentUpon>
-    </Compile>
     <Compile Include="DB\config_traffic_lights.cs">
       <DependentUpon>db_portafolio.tt</DependentUpon>
     </Compile>
@@ -269,6 +266,7 @@
     <Compile Include="Domain\TemplateDomain.cs" />
     <Compile Include="Domain\UserDomain.cs" />
     <Compile Include="Domain\UnitDomain.cs" />
+    <Compile Include="Domain\utils\Predicates.cs" />
     <Compile Include="Exceptions\ExistsException.cs" />
     <Compile Include="Exceptions\AuthenticationException.cs" />
     <Compile Include="Exceptions\NotExistsException.cs" />
@@ -287,8 +285,6 @@
     <Compile Include="Models\UserLogin.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Request\RolUpdateRequest.cs" />
-    <Compile Include="Request\RolInsertRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />

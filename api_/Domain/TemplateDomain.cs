@@ -27,8 +27,6 @@ namespace api_.Domain {
                         id = long.Parse(y.id + ""),
                         name = y.name,
                         description = y.description,
-                        date_start = y.date_start,
-                        date_end = y.date_end,
                         task_status_code = y.task_status_code,
                         template_id = long.Parse(y.template_id + "")
                     }).ToList()
@@ -49,8 +47,6 @@ namespace api_.Domain {
                     List<templates_tasks> list = Template.tasks.Select(x => new templates_tasks {
                         name = x.name,
                         description = x.description,
-                        date_start = x.date_start,
-                        date_end = x.date_end,
                         task_status_code = x.task_status_code,
                     }).ToList();
 
@@ -69,8 +65,6 @@ namespace api_.Domain {
                 List<templates_tasks> list = template.tasks.Select(x => new templates_tasks {
                     name = x.name,
                     description = x.description,
-                    date_start = x.date_start,
-                    date_end = x.date_end,
                     task_status_code = x.task_status_code,
                 }).ToList();
                 TemplateDAL.update(template.id, template.name, template.description, template.state, list);

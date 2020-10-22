@@ -36,8 +36,7 @@ namespace api_.DAL {
                     var entity = conn.templates.Where(x => x.name == name).FirstOrDefault();
 
                     foreach (templates_tasks tt in tasks) {
-                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, tt.date_start,
-                            tt.date_end, entity.id, tt.task_status_code, DateTime.Now);
+                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, entity.id, tt.task_status_code, DateTime.Now);
                     }
                 } catch (Exception e) {
                     throw e;
@@ -61,8 +60,7 @@ namespace api_.DAL {
 
                     // agregamos las actualizaciones
                     foreach (templates_tasks tt in tasks) {
-                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, tt.date_start,
-                            tt.date_end, id, tt.task_status_code, DateTime.Now);
+                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, id, tt.task_status_code, DateTime.Now);
                     }
                 } catch (Exception e) {
                     throw e;

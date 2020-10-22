@@ -32,9 +32,7 @@ namespace api_.DB
         public Nullable<System.DateTime> updated_at { get; set; }
         public Nullable<decimal> state { get; set; }
         public string token_session { get; set; }
-        public Nullable<decimal> enterprise_id { get; set; }
     
-        public virtual enterprises enterprises { get; set; }
         public virtual ICollection<log_assing_task> log_assing_task { get; set; }
         public virtual ICollection<log_task> log_task { get; set; }
         public virtual ICollection<messages> messages { get; set; }
