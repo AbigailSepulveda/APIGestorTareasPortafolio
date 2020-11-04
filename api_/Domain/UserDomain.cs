@@ -13,6 +13,31 @@ namespace api_.Domain {
             // default
         }
 
+        public static List<User> fetchByUnit(decimal unitId) {
+            try {
+                return UserDAL.fetchAll().Where(x => x.unit_id == unitId).Select(x => new User {
+                    id = long.Parse(x.id + ""),
+                    name = x.name,
+                    email = x.email,
+                    rol = x.rol_id == null ? null : RolDAL.fetchAll().Where(y => y.id == x.rol_id).Select(z => new Rol() {
+                        id = long.Parse(z.id + ""),
+                        name = z.name,
+                        state = int.Parse(z.state + "")
+                    }).FirstOrDefault(),
+                    unit = x.unit_id == null ? null : UnitDAL.fetchAll().Where(y => y.id == x.unit_id).Select(z => new Unit() {
+                        id = long.Parse(z.id + ""),
+                        name = z.name,
+                        state = int.Parse(z.state + "")
+                    }).FirstOrDefault(),
+                    rol_id = long.Parse(x.rol_id + ""),
+                    unit_id = long.Parse(x.unit_id + ""),
+                    state = int.Parse(x.state + "")
+                }).ToList();
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         /**
          * Método para obtener la lista de datos realizando el mapeo desde la capa de datos
          */

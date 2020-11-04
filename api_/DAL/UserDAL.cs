@@ -33,7 +33,7 @@ namespace api_.DAL {
             using (var conn = new db_entities()) {
                 try {
                     conn.SP_USER_INSERT(user.name, user.email, user.password, user.rol_id, user.unit_id,
-                        DateTime.Now, 1, user.enterprise_id);
+                        DateTime.Now, 1);
                 } catch (Exception e) {
                     throw e;
                 }
@@ -53,10 +53,10 @@ namespace api_.DAL {
                     } else {
                         if (user.password == null || user.password == "") {
                             conn.SP_USER_UPDATE_WITHOUT_PASSWORD(user.id, user.name, user.email, user.rol_id, user.unit_id,
-                                DateTime.Now, user.state, user.enterprise_id);
+                                DateTime.Now, user.state);
                         } else {
                             conn.SP_USER_UPDATE_WITH_PASSWORD(user.id, user.name, user.email, user.password, user.rol_id, user.unit_id,
-                                DateTime.Now, user.state, user.enterprise_id);
+                                DateTime.Now, user.state);
                         }
                     }
                 } catch (Exception e) {

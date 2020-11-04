@@ -25,6 +25,7 @@ namespace api_.DB
         public Nullable<decimal> state { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
+        public Nullable<System.DateTime> finished { get; set; }
     
         public virtual ICollection<tasks> tasks { get; set; }
     }

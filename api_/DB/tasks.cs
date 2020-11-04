@@ -34,6 +34,8 @@ namespace api_.DB
         public Nullable<System.DateTime> updated_at { get; set; }
         public Nullable<decimal> father_taks_id { get; set; }
         public Nullable<decimal> process_id { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
     
         public virtual ICollection<alerts> alerts { get; set; }
         public virtual ICollection<files> files { get; set; }

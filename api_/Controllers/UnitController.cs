@@ -30,7 +30,7 @@ namespace api_.Controllers {
         public HttpResponseMessage insert(Unit unit) {
             if (checkToken(Request)) {
                 try {
-                    UnitDomain.insert(unit.name, unit.boss_id);
+                    UnitDomain.insert(unit);
                     return response(HttpStatusCode.OK, true, "ready");
                 } catch (Exception e) {
                     return response(HttpStatusCode.InternalServerError, false, e);
@@ -45,7 +45,7 @@ namespace api_.Controllers {
         public HttpResponseMessage update(Unit unit) {
             if (checkToken(Request)) {
                 try {
-                    UnitDomain.update(unit.id, unit.name, unit.state, unit.boss_id);
+                    UnitDomain.update(unit);
                     return response(HttpStatusCode.OK, true, "ready");
                 } catch (Exception e) {
                     return response(HttpStatusCode.InternalServerError, false, e);

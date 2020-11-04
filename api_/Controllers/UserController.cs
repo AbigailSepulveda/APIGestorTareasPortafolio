@@ -26,6 +26,20 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getAllByUnit")]
+        [HttpGet]
+        public HttpResponseMessage getAllByUnit(string unit_id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", UserDomain.fetchByUnit(decimal.Parse(unit_id)));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
         [Route("insert")]
         [HttpPost]
         public HttpResponseMessage insert(User user) {

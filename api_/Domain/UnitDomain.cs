@@ -45,7 +45,7 @@ namespace api_.Domain {
                 if (UnitDAL.exists(unit.name)) {
                     throw new ExistsException();
                 } else {
-                    UnitDAL.insert(unit.name, unit.boss, unit.enterprise_id);
+                    UnitDAL.insert(unit.name, unit.boss_id, unit.enterprise_id);
                 }
             } catch (Exception e) {
                 throw e;
@@ -57,7 +57,7 @@ namespace api_.Domain {
          */
         public static void update(Unit unit) {
             try {
-                UnitDAL.update(unit.id, unit.name, unit.state, unit.boss, unit.enterprise_id);
+                UnitDAL.update(unit.id, unit.name, unit.state, unit.boss_id, unit.enterprise_id);
             } catch (Exception e) {
                 throw e;
             }

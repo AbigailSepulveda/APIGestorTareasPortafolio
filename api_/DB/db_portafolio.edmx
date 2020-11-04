@@ -107,6 +107,7 @@
           <Property Name="state" Type="number" Precision="38" Scale="0" />
           <Property Name="created_at" Type="timestamp" Precision="6" />
           <Property Name="updated_at" Type="timestamp" Precision="6" />
+          <Property Name="finished" Type="timestamp" Precision="6" />
         </EntityType>
         <EntityType Name="roles">
           <Key>
@@ -150,6 +151,8 @@
           <Property Name="updated_at" Type="timestamp" Precision="6" />
           <Property Name="father_taks_id" Type="number" Precision="38" Scale="0" />
           <Property Name="process_id" Type="number" Precision="38" Scale="0" />
+          <Property Name="name" Type="varchar2" MaxLength="255" />
+          <Property Name="description" Type="varchar2" MaxLength="255" />
         </EntityType>
         <EntityType Name="tasks_relations">
           <Key>
@@ -679,6 +682,102 @@
     <edmx:ConceptualModels>
       <Schema Namespace="db_model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="db_entities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_GREEN" Mode="In" Type="Decimal" />
+            <Parameter Name="P_YELLOW" Mode="In" Type="Decimal" />
+            <Parameter Name="P_RED" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ROL_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ROL_MODULE_INSERT">
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_MODULE_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ROL_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_TEMPLATE_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_TEMPLATE_TASK_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
+            <Parameter Name="P_TEMPLATE_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_TASK_STATUS_CODE" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="SP_TEMPLATE_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_UNIT_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+            <Parameter Name="P_BOSS" Mode="In" Type="Decimal" />
+            <Parameter Name="P_ENTERPRISE_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_USER_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
+            <Parameter Name="P_PASSWORD" Mode="In" Type="String" />
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_CREATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_USER_UPDATE_WITHOUT_PASSWORD">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_USER_UPDATE_WITH_PASSWORD">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
+            <Parameter Name="P_PASSWORD" Mode="In" Type="String" />
+            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ENTERPRISE_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ENTERPRISE_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_UPDATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_UNIT_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+            <Parameter Name="P_BOSS" Mode="In" Type="Decimal" />
+            <Parameter Name="P_ENTERPRISE_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
           <EntitySet Name="alerts" EntityType="db_model.alerts" />
           <EntitySet Name="config_traffic_lights" EntityType="db_model.config_traffic_lights" />
           <EntitySet Name="enterprises" EntityType="db_model.enterprises" />
@@ -782,102 +881,6 @@
             <End Role="units" EntitySet="units" />
             <End Role="users" EntitySet="users" />
           </AssociationSet>
-          <FunctionImport Name="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE">
-            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_GREEN" Mode="In" Type="Decimal" />
-            <Parameter Name="P_YELLOW" Mode="In" Type="Decimal" />
-            <Parameter Name="P_RED" Mode="In" Type="Decimal" />
-            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
-          </FunctionImport>
-          <FunctionImport Name="SP_ROL_INSERT">
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_ROL_MODULE_INSERT">
-            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_MODULE_ID" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_ROL_UPDATE">
-            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_UPDATE_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_TEMPLATE_INSERT">
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
-            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_TEMPLATE_TASK_INSERT">
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
-            <Parameter Name="P_TEMPLATE_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_TASK_STATUS_CODE" Mode="In" Type="String" />
-            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
-          </FunctionImport>
-          <FunctionImport Name="SP_TEMPLATE_UPDATE">
-            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
-            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_UNIT_UPDATE">
-            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-            <Parameter Name="P_BOSS" Mode="In" Type="Decimal" />
-            <Parameter Name="P_ENTERPRISE_ID" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_USER_INSERT">
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
-            <Parameter Name="P_PASSWORD" Mode="In" Type="String" />
-            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_CREATED_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_USER_UPDATE_WITHOUT_PASSWORD">
-            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
-            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_USER_UPDATE_WITH_PASSWORD">
-            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_EMAIL" Mode="In" Type="String" />
-            <Parameter Name="P_PASSWORD" Mode="In" Type="String" />
-            <Parameter Name="P_ROL_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_UNIT_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_UPDATED_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_ENTERPRISE_INSERT">
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_ENTERPRISE_UPDATE">
-            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_UPDATE_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-          </FunctionImport>
-          <FunctionImport Name="SP_UNIT_INSERT">
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
-            <Parameter Name="P_BOSS" Mode="In" Type="Decimal" />
-            <Parameter Name="P_ENTERPRISE_ID" Mode="In" Type="Decimal" />
-          </FunctionImport>
         </EntityContainer>
         <EntityType Name="alerts">
           <Key>
@@ -993,6 +996,7 @@
           <Property Name="state" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="created_at" Type="DateTime" Precision="6" />
           <Property Name="updated_at" Type="DateTime" Precision="6" />
+          <Property Name="finished" Type="DateTime" Precision="6" />
           <NavigationProperty Name="tasks" Relationship="db_model.fk_t_process_id" FromRole="process" ToRole="tasks" />
         </EntityType>
         <EntityType Name="roles">
@@ -1043,6 +1047,8 @@
           <Property Name="updated_at" Type="DateTime" Precision="6" />
           <Property Name="father_taks_id" Type="Decimal" Precision="38" Scale="0" />
           <Property Name="process_id" Type="Decimal" Precision="38" Scale="0" />
+          <Property Name="name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="alerts" Relationship="db_model.fk_a_task_id" FromRole="tasks" ToRole="alerts" />
           <NavigationProperty Name="files" Relationship="db_model.fk_f_task_id" FromRole="tasks" ToRole="files" />
           <NavigationProperty Name="log_assing_task" Relationship="db_model.fk_lat_task_id" FromRole="tasks" ToRole="log_assing_task" />
@@ -1395,6 +1401,20 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="db_modelStoreContainer" CdmEntityContainer="db_entities">
+          <FunctionImportMapping FunctionImportName="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" FunctionName="db_model.Store.SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_ROL_INSERT" FunctionName="db_model.Store.SP_ROL_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_ROL_MODULE_INSERT" FunctionName="db_model.Store.SP_ROL_MODULE_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_ROL_UPDATE" FunctionName="db_model.Store.SP_ROL_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_TASK_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_TASK_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_UPDATE" FunctionName="db_model.Store.SP_TEMPLATE_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_UNIT_UPDATE" FunctionName="db_model.Store.SP_UNIT_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_USER_INSERT" FunctionName="db_model.Store.SP_USER_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_USER_UPDATE_WITHOUT_PASSWORD" FunctionName="db_model.Store.SP_USER_UPDATE_WITHOUT_PASSWORD" />
+          <FunctionImportMapping FunctionImportName="SP_USER_UPDATE_WITH_PASSWORD" FunctionName="db_model.Store.SP_USER_UPDATE_WITH_PASSWORD" />
+          <FunctionImportMapping FunctionImportName="SP_ENTERPRISE_INSERT" FunctionName="db_model.Store.SP_ENTERPRISE_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_ENTERPRISE_UPDATE" FunctionName="db_model.Store.SP_ENTERPRISE_UPDATE" />
+          <FunctionImportMapping FunctionImportName="SP_UNIT_INSERT" FunctionName="db_model.Store.SP_UNIT_INSERT" />
           <EntitySetMapping Name="alerts">
             <EntityTypeMapping TypeName="db_model.alerts">
               <MappingFragment StoreEntitySet="alerts">
@@ -1498,6 +1518,7 @@
           <EntitySetMapping Name="process">
             <EntityTypeMapping TypeName="db_model.process">
               <MappingFragment StoreEntitySet="process">
+                <ScalarProperty Name="finished" ColumnName="finished" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
                 <ScalarProperty Name="created_at" ColumnName="created_at" />
                 <ScalarProperty Name="state" ColumnName="state" />
@@ -1542,6 +1563,8 @@
           <EntitySetMapping Name="tasks">
             <EntityTypeMapping TypeName="db_model.tasks">
               <MappingFragment StoreEntitySet="tasks">
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="process_id" ColumnName="process_id" />
                 <ScalarProperty Name="father_taks_id" ColumnName="father_taks_id" />
                 <ScalarProperty Name="updated_at" ColumnName="updated_at" />
@@ -1630,20 +1653,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" FunctionName="db_model.Store.SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" />
-          <FunctionImportMapping FunctionImportName="SP_ROL_INSERT" FunctionName="db_model.Store.SP_ROL_INSERT" />
-          <FunctionImportMapping FunctionImportName="SP_ROL_MODULE_INSERT" FunctionName="db_model.Store.SP_ROL_MODULE_INSERT" />
-          <FunctionImportMapping FunctionImportName="SP_ROL_UPDATE" FunctionName="db_model.Store.SP_ROL_UPDATE" />
-          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_INSERT" />
-          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_TASK_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_TASK_INSERT" />
-          <FunctionImportMapping FunctionImportName="SP_TEMPLATE_UPDATE" FunctionName="db_model.Store.SP_TEMPLATE_UPDATE" />
-          <FunctionImportMapping FunctionImportName="SP_UNIT_UPDATE" FunctionName="db_model.Store.SP_UNIT_UPDATE" />
-          <FunctionImportMapping FunctionImportName="SP_USER_INSERT" FunctionName="db_model.Store.SP_USER_INSERT" />
-          <FunctionImportMapping FunctionImportName="SP_USER_UPDATE_WITHOUT_PASSWORD" FunctionName="db_model.Store.SP_USER_UPDATE_WITHOUT_PASSWORD" />
-          <FunctionImportMapping FunctionImportName="SP_USER_UPDATE_WITH_PASSWORD" FunctionName="db_model.Store.SP_USER_UPDATE_WITH_PASSWORD" />
-          <FunctionImportMapping FunctionImportName="SP_ENTERPRISE_INSERT" FunctionName="db_model.Store.SP_ENTERPRISE_INSERT" />
-          <FunctionImportMapping FunctionImportName="SP_ENTERPRISE_UPDATE" FunctionName="db_model.Store.SP_ENTERPRISE_UPDATE" />
-          <FunctionImportMapping FunctionImportName="SP_UNIT_INSERT" FunctionName="db_model.Store.SP_UNIT_INSERT" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
