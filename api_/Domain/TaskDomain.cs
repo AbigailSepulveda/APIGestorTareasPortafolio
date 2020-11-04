@@ -13,14 +13,50 @@ namespace api_.Domain {
             // default
         }
 
+        public static Task fetchById(decimal id) {
+            try {
+                Task task = null;
+                var result = TaskDAL.fetchById(id);
+
+                if (result != null) {
+                    task = new Task();
+                    task.id = long.Parse(result.id + "");
+                    task.name = result.name;
+                    task.assingId = long.Parse(result.assing_id + "");
+                    task.description = result.description;
+                    task.dateStart = result.date_start;
+                    task.dateEnd = result.date_end;
+                    task.creatorUserId = long.Parse(result.creator_user_id + "");
+                    task.name = result.name;
+                    task.taskStatusId = result.task_status;
+                    task.documents = DocumentDAL.fetchAllByTaskId(long.Parse(result.id + "")).Select(x => new Document() {
+                        id = long.Parse(x.id + ""),
+                        name = x.name,
+                        path = x.path,
+                        url = x.url,
+                        task_id = long.Parse(x.task_id + "")
+                    }).ToList();
+                }
+
+                return task;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         /**
          * Método para obtener la lista de datos realizando el mapeo desde la capa de datos
          */
         public static List<Task> fetchAllByUser(decimal id) {
             try {
+
                 return TaskDAL.fetchAllByUser(id).Select(x => new Task {
                     id = long.Parse(x.id + ""),
-                    name = x.name
+                    name = x.name,
+                    description = x.description,
+                    dateStart = x.date_start,
+                    dateEnd = x.date_end,
+                    taskStatusId = x.task_status
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -48,8 +84,8 @@ namespace api_.Domain {
                     tasks.task_status = task.taskStatusId;
                     tasks.creator_user_id = task.creatorUserId;
                     tasks.created_at = DateTime.Now;
-                    tasks.date_start = DateTime.Parse(task.dateStart);
-                    tasks.date_end = DateTime.Parse(task.dateEnd);
+                    tasks.date_start = task.dateStart;
+                    tasks.date_end = task.dateEnd;
 
 
                     var id = TaskDAL.createTask(tasks);

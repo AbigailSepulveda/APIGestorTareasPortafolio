@@ -23,6 +23,16 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getByTaskId")]
+        [HttpGet]
+        public HttpResponseMessage getByTaskId(decimal id) {
+            try {
+                return response(HttpStatusCode.OK, true, "ready", TaskDomain.fetchById(id));
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
         [Route("createTask")]
         [HttpPost]
         public HttpResponseMessage createTask(Task task) {

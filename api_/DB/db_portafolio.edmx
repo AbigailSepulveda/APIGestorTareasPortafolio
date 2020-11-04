@@ -573,6 +573,8 @@
           <Parameter Name="P_PROCESS_ID" Type="number" Mode="In" />
           <Parameter Name="P_FATHER_TASK_ID" Type="number" Mode="In" />
           <Parameter Name="P_TASK_STATUS_CODE" Type="varchar2" Mode="In" />
+          <Parameter Name="P_START" Type="date" Mode="In" />
+          <Parameter Name="P_END" Type="date" Mode="In" />
           <Parameter Name="P_CREATE_AT" Type="timestamp" Mode="In" />
           <Parameter Name="P_USER_ID" Type="number" Mode="In" />
           <Parameter Name="P_ASSING_ID" Type="number" Mode="In" />
@@ -916,16 +918,6 @@
             <Parameter Name="P_UPDATE_AT" Mode="In" Type="DateTime" />
             <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
           </FunctionImport>
-          <FunctionImport Name="SP_TASK_INSERT">
-            <Parameter Name="P_NAME" Mode="In" Type="String" />
-            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
-            <Parameter Name="P_PROCESS_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_FATHER_TASK_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_TASK_STATUS_CODE" Mode="In" Type="String" />
-            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
-            <Parameter Name="P_USER_ID" Mode="In" Type="Decimal" />
-            <Parameter Name="P_ASSING_ID" Mode="In" Type="Decimal" />
-          </FunctionImport>
           <FunctionImport Name="SP_TEMPLATE_INSERT">
             <Parameter Name="P_NAME" Mode="In" Type="String" />
             <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
@@ -1004,6 +996,18 @@
             <End Role="tasks" EntitySet="tasks" />
             <End Role="files" EntitySet="files" />
           </AssociationSet>
+          <FunctionImport Name="SP_TASK_INSERT">
+            <Parameter Name="P_NAME" Mode="In" Type="String" />
+            <Parameter Name="P_DESCRIPTION" Mode="In" Type="String" />
+            <Parameter Name="P_PROCESS_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_FATHER_TASK_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_TASK_STATUS_CODE" Mode="In" Type="String" />
+            <Parameter Name="P_START" Mode="In" Type="DateTime" />
+            <Parameter Name="P_END" Mode="In" Type="DateTime" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_USER_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_ASSING_ID" Mode="In" Type="Decimal" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="alerts">
           <Key>
@@ -1817,7 +1821,6 @@
           <FunctionImportMapping FunctionImportName="SP_ROL_INSERT" FunctionName="db_model.Store.SP_ROL_INSERT" />
           <FunctionImportMapping FunctionImportName="SP_ROL_MODULE_INSERT" FunctionName="db_model.Store.SP_ROL_MODULE_INSERT" />
           <FunctionImportMapping FunctionImportName="SP_ROL_UPDATE" FunctionName="db_model.Store.SP_ROL_UPDATE" />
-          <FunctionImportMapping FunctionImportName="SP_TASK_INSERT" FunctionName="db_model.Store.SP_TASK_INSERT" />
           <FunctionImportMapping FunctionImportName="SP_TEMPLATE_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_INSERT" />
           <FunctionImportMapping FunctionImportName="SP_TEMPLATE_TASK_INSERT" FunctionName="db_model.Store.SP_TEMPLATE_TASK_INSERT" />
           <FunctionImportMapping FunctionImportName="SP_TEMPLATE_UPDATE" FunctionName="db_model.Store.SP_TEMPLATE_UPDATE" />
@@ -1840,6 +1843,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_TASK_INSERT" FunctionName="db_model.Store.SP_TASK_INSERT" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

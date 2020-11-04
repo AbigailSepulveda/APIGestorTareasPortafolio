@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace api_.Models {
     public class Task {
@@ -7,8 +8,8 @@ namespace api_.Models {
         public String description { get; set; }
         public long creatorUserId { get; set; }
         public User creatorUser { get; set; }
-        public String dateStart { get; set; }
-        public String dateEnd { get; set; }
+        public DateTime? dateStart { get; set; }
+        public DateTime? dateEnd { get; set; }
         public String taskStatusId { get; set; }
         public TaskStatus taskStatus { get; set; }
         public DateTime? createdAt { get; set; }
@@ -17,6 +18,7 @@ namespace api_.Models {
         public long processId { get; set; }
         public Process process { get; set; }
         public Document document { get; set; }
+        public List<Document> documents { get; set; }
         public long assingId { get; set; }
     }
 }
