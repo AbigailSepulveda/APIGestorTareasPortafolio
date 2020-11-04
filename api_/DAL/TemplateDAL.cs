@@ -28,15 +28,15 @@ namespace api_.DAL {
         /**
          * Método para crear nuevo registro
          */
-        public static void insert(String name, String description, List<templates_tasks> tasks) {
+        public static void insert(String name, String description, List<templates_tasks> tasks, long userId) {
             using (var conn = new db_entities()) {
                 try {
-                    conn.SP_TEMPLATE_INSERT(name, description, DateTime.Now, 1);
+                    conn.SP_TEMPLATE_INSERT(name, description, DateTime.Now, 1, userId);
 
                     var entity = conn.templates.Where(x => x.name == name).FirstOrDefault();
 
                     foreach (templates_tasks tt in tasks) {
-                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, entity.id, tt.task_status_code, DateTime.Now);
+                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, entity.id, tt.task_status_code, DateTime.Now, userId);
                     }
                 } catch (Exception e) {
                     throw e;
@@ -47,10 +47,10 @@ namespace api_.DAL {
         /**
          * Método para actualizar el registro
          */
-        public static void update(decimal id, String name, String description, int state, List<templates_tasks> tasks) {
+        public static void update(decimal id, String name, String description, int state, List<templates_tasks> tasks, long userId) {
             using (var conn = new db_entities()) {
                 try {
-                    conn.SP_TEMPLATE_UPDATE(id, name, description, DateTime.Now, state);
+                    conn.SP_TEMPLATE_UPDATE(id, name, description, DateTime.Now, state, userId);
 
                     // removemos los items
                     foreach (templates_tasks tt in conn.templates_tasks.Where(x => x.template_id == id).ToList()) {
@@ -60,7 +60,7 @@ namespace api_.DAL {
 
                     // agregamos las actualizaciones
                     foreach (templates_tasks tt in tasks) {
-                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, id, tt.task_status_code, DateTime.Now);
+                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, id, tt.task_status_code, DateTime.Now, userId);
                     }
                 } catch (Exception e) {
                     throw e;

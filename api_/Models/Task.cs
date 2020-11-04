@@ -16,6 +16,7 @@ namespace api_.Models {
         public long fatherTaksId { get; set; }
         public long processId { get; set; }
         public Process process { get; set; }
-        public String path { get; set; }
+        public Document document { get; set; }
+        public long assingId { get; set; }
     }
 }

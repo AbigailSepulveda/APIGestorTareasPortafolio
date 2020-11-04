@@ -7,5 +7,6 @@ namespace api_.Models {
         public string description { get; set; }
         public int state { get; set; }
         public List<TemplateTask> tasks { get; set; }
+        public long userId { get; set; }
     }
 }

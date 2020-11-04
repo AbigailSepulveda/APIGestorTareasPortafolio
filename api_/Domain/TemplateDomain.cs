@@ -29,7 +29,8 @@ namespace api_.Domain {
                         description = y.description,
                         task_status_code = y.task_status_code,
                         template_id = long.Parse(y.template_id + "")
-                    }).ToList()
+                    }).ToList(),
+                    userId = long.Parse(x.user_id + "")
                 }).ToList();
             } catch (Exception e) {
                 throw e;
@@ -50,7 +51,7 @@ namespace api_.Domain {
                         task_status_code = x.task_status_code,
                     }).ToList();
 
-                    TemplateDAL.insert(Template.name, Template.description, list);
+                    TemplateDAL.insert(Template.name, Template.description, list, Template.userId);
                 }
             } catch (Exception e) {
                 throw e;
@@ -67,7 +68,7 @@ namespace api_.Domain {
                     description = x.description,
                     task_status_code = x.task_status_code,
                 }).ToList();
-                TemplateDAL.update(template.id, template.name, template.description, template.state, list);
+                TemplateDAL.update(template.id, template.name, template.description, template.state, list, template.userId);
             } catch (Exception e) {
                 throw e;
             }

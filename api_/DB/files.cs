@@ -19,7 +19,6 @@ namespace api_.DB
         public string name { get; set; }
         public string url { get; set; }
         public string path { get; set; }
-        public Nullable<decimal> version { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
     

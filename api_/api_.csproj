@@ -164,6 +164,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ProcessController.cs" />
     <Compile Include="Controllers\TaskController.cs" />
     <Compile Include="Controllers\TemplateController.cs" />
     <Compile Include="Controllers\RolController.cs" />
@@ -176,6 +177,8 @@
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\TypeAlertController.cs" />
     <Compile Include="DAL\ConfigTrafficLightDAL.cs" />
+    <Compile Include="DAL\ProcessDAL.cs" />
+    <Compile Include="DAL\DocumentDAL.cs" />
     <Compile Include="DAL\TemplateTaskDAL.cs" />
     <Compile Include="DAL\TemplateDAL.cs" />
     <Compile Include="DAL\EnterpriseDAL.cs" />
@@ -263,6 +266,7 @@
     <Compile Include="Domain\EnterpriseDomain.cs" />
     <Compile Include="Domain\ModuleDomain.cs" />
     <Compile Include="Domain\RolDomain.cs" />
+    <Compile Include="Domain\ProcessDomain.cs" />
     <Compile Include="Domain\TaskDomain.cs" />
     <Compile Include="Domain\TaskStatusDomain.cs" />
     <Compile Include="Domain\TypeAlertDomain.cs" />
@@ -281,6 +285,7 @@
     <Compile Include="Models\Module.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Process.cs" />
+    <Compile Include="Models\Document.cs" />
     <Compile Include="Models\TaskStatus.cs" />
     <Compile Include="Models\TemplateTask.cs" />
     <Compile Include="Models\TypeAlert.cs" />

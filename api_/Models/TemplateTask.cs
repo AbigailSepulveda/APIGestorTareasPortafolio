@@ -7,6 +7,6 @@ namespace api_.Models {
         public string description { get; set; }
         public string task_status_code { get; set; }
         public long template_id { get; set; }
-
+        public long userId { get; set; }
     }
 }

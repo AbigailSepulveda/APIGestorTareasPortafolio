@@ -19,7 +19,11 @@ namespace api_.DB
             this.log_assing_task = new HashSet<log_assing_task>();
             this.log_task = new HashSet<log_task>();
             this.messages = new HashSet<messages>();
+            this.process = new HashSet<process>();
             this.tasks = new HashSet<tasks>();
+            this.tasks1 = new HashSet<tasks>();
+            this.templates = new HashSet<templates>();
+            this.templates_tasks = new HashSet<templates_tasks>();
         }
     
         public decimal id { get; set; }
@@ -36,8 +40,12 @@ namespace api_.DB
         public virtual ICollection<log_assing_task> log_assing_task { get; set; }
         public virtual ICollection<log_task> log_task { get; set; }
         public virtual ICollection<messages> messages { get; set; }
+        public virtual ICollection<process> process { get; set; }
         public virtual roles roles { get; set; }
         public virtual ICollection<tasks> tasks { get; set; }
+        public virtual ICollection<tasks> tasks1 { get; set; }
+        public virtual ICollection<templates> templates { get; set; }
+        public virtual ICollection<templates_tasks> templates_tasks { get; set; }
         public virtual units units { get; set; }
     }
 }

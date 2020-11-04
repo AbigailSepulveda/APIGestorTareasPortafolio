@@ -17,12 +17,12 @@ namespace api_.DB
         public tasks()
         {
             this.alerts = new HashSet<alerts>();
-            this.files = new HashSet<files>();
             this.log_assing_task = new HashSet<log_assing_task>();
             this.log_task = new HashSet<log_task>();
             this.messages = new HashSet<messages>();
             this.tasks_relations = new HashSet<tasks_relations>();
             this.tasks_relations1 = new HashSet<tasks_relations>();
+            this.files = new HashSet<files>();
         }
     
         public decimal id { get; set; }
@@ -36,15 +36,17 @@ namespace api_.DB
         public Nullable<decimal> process_id { get; set; }
         public string name { get; set; }
         public string description { get; set; }
+        public Nullable<decimal> assing_id { get; set; }
     
         public virtual ICollection<alerts> alerts { get; set; }
-        public virtual ICollection<files> files { get; set; }
         public virtual ICollection<log_assing_task> log_assing_task { get; set; }
         public virtual ICollection<log_task> log_task { get; set; }
         public virtual ICollection<messages> messages { get; set; }
         public virtual process process { get; set; }
         public virtual users users { get; set; }
+        public virtual users users1 { get; set; }
         public virtual ICollection<tasks_relations> tasks_relations { get; set; }
         public virtual ICollection<tasks_relations> tasks_relations1 { get; set; }
+        public virtual ICollection<files> files { get; set; }
     }
 }
