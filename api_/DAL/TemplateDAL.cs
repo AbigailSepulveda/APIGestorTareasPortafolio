@@ -36,7 +36,7 @@ namespace api_.DAL {
                     var entity = conn.templates.Where(x => x.name == name).FirstOrDefault();
 
                     foreach (templates_tasks tt in tasks) {
-                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, entity.id, tt.task_status_code, DateTime.Now, userId);
+                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, entity.id, tt.task_status_code, DateTime.Now, tt.end_date, userId);
                     }
                 } catch (Exception e) {
                     throw e;
@@ -60,7 +60,7 @@ namespace api_.DAL {
 
                     // agregamos las actualizaciones
                     foreach (templates_tasks tt in tasks) {
-                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, id, tt.task_status_code, DateTime.Now, userId);
+                        conn.SP_TEMPLATE_TASK_INSERT(tt.name, tt.description, id, tt.task_status_code, DateTime.Now, tt.end_date, userId);
                     }
                 } catch (Exception e) {
                     throw e;
@@ -75,6 +75,18 @@ namespace api_.DAL {
             using (var conn = new db_entities()) {
                 try {
                     return conn.templates.ToList();
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
+
+        public static List<templates> fetchAllByUnit(decimal unit_id) {
+            using (var conn = new db_entities()) {
+                try {
+                    var users = conn.users.Where(x => x.unit_id == unit_id).Select(x => x.id).ToList();
+
+                    return conn.templates.Where(r => users.Contains(r.user_id)).ToList();
                 } catch (Exception e) {
                     throw e;
                 }

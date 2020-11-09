@@ -175,7 +175,6 @@
     <Compile Include="Controllers\TaskStatusController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
-    <Compile Include="Controllers\TypeAlertController.cs" />
     <Compile Include="DAL\ConfigTrafficLightDAL.cs" />
     <Compile Include="DAL\ProcessDAL.cs" />
     <Compile Include="DAL\DocumentDAL.cs" />
@@ -186,7 +185,6 @@
     <Compile Include="DAL\RolModuleDAL.cs" />
     <Compile Include="DAL\RolDAL.cs" />
     <Compile Include="DAL\TaskStatusDAL.cs" />
-    <Compile Include="DAL\TypeAlertDAL.cs" />
     <Compile Include="DAL\TaskDAL.cs" />
     <Compile Include="DAL\UserDAL.cs" />
     <Compile Include="DAL\UnitDAL.cs" />
@@ -253,9 +251,6 @@
     <Compile Include="DB\templates_tasks.cs">
       <DependentUpon>db_portafolio.tt</DependentUpon>
     </Compile>
-    <Compile Include="DB\types_alerts.cs">
-      <DependentUpon>db_portafolio.tt</DependentUpon>
-    </Compile>
     <Compile Include="DB\units.cs">
       <DependentUpon>db_portafolio.tt</DependentUpon>
     </Compile>
@@ -269,7 +264,6 @@
     <Compile Include="Domain\ProcessDomain.cs" />
     <Compile Include="Domain\TaskDomain.cs" />
     <Compile Include="Domain\TaskStatusDomain.cs" />
-    <Compile Include="Domain\TypeAlertDomain.cs" />
     <Compile Include="Domain\TemplateDomain.cs" />
     <Compile Include="Domain\UserDomain.cs" />
     <Compile Include="Domain\UnitDomain.cs" />
@@ -283,6 +277,7 @@
     <Compile Include="Models\ConfigTrafficLight.cs" />
     <Compile Include="Models\Enterprise.cs" />
     <Compile Include="Models\Module.cs" />
+    <Compile Include="Models\request\CreateProcessRequest.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Process.cs" />
     <Compile Include="Models\Document.cs" />

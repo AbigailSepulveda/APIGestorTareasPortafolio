@@ -10,5 +10,6 @@ namespace api_.Models {
         public DateTime updated_at { get; set; }
         public DateTime finished { get; set; }
         public long user_id { get; set; }
+        public int n_tasks { get; set; }
     }
 }

@@ -23,6 +23,16 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getAssignTasksByUser")]
+        [HttpGet]
+        public HttpResponseMessage getAssignTasksByUser(decimal id) {
+            try {
+                return response(HttpStatusCode.OK, true, "ready", TaskDomain.getAssignTasksByUser(id));
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
         [Route("getByTaskId")]
         [HttpGet]
         public HttpResponseMessage getByTaskId(decimal id) {
@@ -33,11 +43,47 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getAllByUnit")]
+        [HttpGet]
+        public HttpResponseMessage getAllByUnit(string unit_id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.fetchByUnit(decimal.Parse(unit_id)));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
         [Route("createTask")]
         [HttpPost]
         public HttpResponseMessage createTask(Task task) {
             try {
                 TaskDomain.createTask(task);
+                return response(HttpStatusCode.OK, true, "ready");
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
+        [Route("refuseTask")]
+        [HttpPost]
+        public HttpResponseMessage refuseTask(Task task) {
+            try {
+                TaskDomain.refuseTask(task.id, task.description);
+                return response(HttpStatusCode.OK, true, "ready");
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
+        [Route("acceptTask")]
+        [HttpPost]
+        public HttpResponseMessage acceptTask(Task task) {
+            try {
+                TaskDomain.acceptTask(task.id);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);

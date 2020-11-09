@@ -21,7 +21,8 @@ namespace api_.DB
         public string task_status_code { get; set; }
         public string description { get; set; }
         public string name { get; set; }
-        public Nullable<decimal> user_id { get; set; }
+        public decimal user_id { get; set; }
+        public Nullable<System.DateTime> end_date { get; set; }
     
         public virtual task_statuses task_statuses { get; set; }
         public virtual templates templates { get; set; }

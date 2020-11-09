@@ -22,5 +22,15 @@ namespace api_.DAL {
                 }
             }
         }
+
+        public static List<templates_tasks> fetchAllByTemplateId(decimal id) {
+            using (var conn = new db_entities()) {
+                try {
+                    return conn.templates_tasks.Where(x => x.template_id == id).ToList();
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
     }
 }

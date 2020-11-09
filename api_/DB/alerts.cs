@@ -16,12 +16,11 @@ namespace api_.DB
     {
         public decimal id { get; set; }
         public string message { get; set; }
-        public Nullable<decimal> type_alert_id { get; set; }
         public Nullable<decimal> task_id { get; set; }
         public Nullable<System.DateTime> created_at { get; set; }
         public Nullable<System.DateTime> updated_at { get; set; }
+        public Nullable<short> state { get; set; }
     
         public virtual tasks tasks { get; set; }
-        public virtual types_alerts types_alerts { get; set; }
     }
 }

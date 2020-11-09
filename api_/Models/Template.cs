@@ -8,5 +8,6 @@ namespace api_.Models {
         public int state { get; set; }
         public List<TemplateTask> tasks { get; set; }
         public long userId { get; set; }
+        public int n_tasks { get; set; }
     }
 }

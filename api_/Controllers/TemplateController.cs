@@ -13,11 +13,11 @@ namespace api_.Controllers {
             // default
         }
 
-        [Route("getAll")]
+        [Route("getAllByUnit")]
         [HttpGet]
-        public HttpResponseMessage getAll() {
+        public HttpResponseMessage getAllByUnit(decimal unit_id) {
             try {
-                return response(HttpStatusCode.OK, true, "ready", TemplateDomain.fetchAll());
+                return response(HttpStatusCode.OK, true, "ready", TemplateDomain.fetchAllByUnit(unit_id));
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);
             }
@@ -28,6 +28,17 @@ namespace api_.Controllers {
         public HttpResponseMessage insert(Template template) {
             try {
                 TemplateDomain.insert(template);
+                return response(HttpStatusCode.OK, true, "ready");
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
+        [Route("start")]
+        [HttpPost]
+        public HttpResponseMessage start(Template template) {
+            try {
+                TemplateDomain.start(template.id, template.userId);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);

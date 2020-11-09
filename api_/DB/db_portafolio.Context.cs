@@ -31,6 +31,7 @@ namespace api_.DB
         public DbSet<alerts> alerts { get; set; }
         public DbSet<config_traffic_lights> config_traffic_lights { get; set; }
         public DbSet<enterprises> enterprises { get; set; }
+        public DbSet<files> files { get; set; }
         public DbSet<log_assing_task> log_assing_task { get; set; }
         public DbSet<log_task> log_task { get; set; }
         public DbSet<messages> messages { get; set; }
@@ -43,10 +44,8 @@ namespace api_.DB
         public DbSet<tasks_relations> tasks_relations { get; set; }
         public DbSet<templates> templates { get; set; }
         public DbSet<templates_tasks> templates_tasks { get; set; }
-        public DbSet<types_alerts> types_alerts { get; set; }
         public DbSet<units> units { get; set; }
         public DbSet<users> users { get; set; }
-        public DbSet<files> files { get; set; }
     
         public virtual int SP_CONFIG_TRAFFIC_LIGHTS_UPDATE(Nullable<decimal> p_ID, Nullable<decimal> p_GREEN, Nullable<decimal> p_YELLOW, Nullable<decimal> p_RED, Nullable<System.DateTime> p_UPDATED_AT)
         {
@@ -111,6 +110,56 @@ namespace api_.DB
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ENTERPRISE_UPDATE", p_IDParameter, p_NAMEParameter, p_UPDATE_ATParameter, p_STATEParameter);
         }
     
+        public virtual int SP_FILE_INSERT(Nullable<decimal> p_TASK_ID, string p_NAME, string p_URL, string p_PATH, Nullable<System.DateTime> p_CREATED_AT)
+        {
+            var p_TASK_IDParameter = p_TASK_ID.HasValue ?
+                new ObjectParameter("P_TASK_ID", p_TASK_ID) :
+                new ObjectParameter("P_TASK_ID", typeof(decimal));
+    
+            var p_NAMEParameter = p_NAME != null ?
+                new ObjectParameter("P_NAME", p_NAME) :
+                new ObjectParameter("P_NAME", typeof(string));
+    
+            var p_URLParameter = p_URL != null ?
+                new ObjectParameter("P_URL", p_URL) :
+                new ObjectParameter("P_URL", typeof(string));
+    
+            var p_PATHParameter = p_PATH != null ?
+                new ObjectParameter("P_PATH", p_PATH) :
+                new ObjectParameter("P_PATH", typeof(string));
+    
+            var p_CREATED_ATParameter = p_CREATED_AT.HasValue ?
+                new ObjectParameter("P_CREATED_AT", p_CREATED_AT) :
+                new ObjectParameter("P_CREATED_AT", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_FILE_INSERT", p_TASK_IDParameter, p_NAMEParameter, p_URLParameter, p_PATHParameter, p_CREATED_ATParameter);
+        }
+    
+        public virtual int SP_PROCESS_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_CREATE_AT, Nullable<System.DateTime> p_START, Nullable<decimal> p_USER_ID)
+        {
+            var p_NAMEParameter = p_NAME != null ?
+                new ObjectParameter("P_NAME", p_NAME) :
+                new ObjectParameter("P_NAME", typeof(string));
+    
+            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
+                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
+                new ObjectParameter("P_DESCRIPTION", typeof(string));
+    
+            var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
+                new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
+                new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
+    
+            var p_STARTParameter = p_START.HasValue ?
+                new ObjectParameter("P_START", p_START) :
+                new ObjectParameter("P_START", typeof(System.DateTime));
+    
+            var p_USER_IDParameter = p_USER_ID.HasValue ?
+                new ObjectParameter("P_USER_ID", p_USER_ID) :
+                new ObjectParameter("P_USER_ID", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_PROCESS_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_CREATE_ATParameter, p_STARTParameter, p_USER_IDParameter);
+        }
+    
         public virtual int SP_ROL_INSERT(string p_NAME, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE)
         {
             var p_NAMEParameter = p_NAME != null ?
@@ -162,6 +211,51 @@ namespace api_.DB
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ROL_UPDATE", p_IDParameter, p_NAMEParameter, p_UPDATE_ATParameter, p_STATEParameter);
         }
     
+        public virtual int SP_TASK_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<decimal> p_PROCESS_ID, Nullable<decimal> p_FATHER_TASK_ID, string p_TASK_STATUS_CODE, Nullable<System.DateTime> p_START, Nullable<System.DateTime> p_END, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_USER_ID, Nullable<decimal> p_ASSING_ID)
+        {
+            var p_NAMEParameter = p_NAME != null ?
+                new ObjectParameter("P_NAME", p_NAME) :
+                new ObjectParameter("P_NAME", typeof(string));
+    
+            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
+                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
+                new ObjectParameter("P_DESCRIPTION", typeof(string));
+    
+            var p_PROCESS_IDParameter = p_PROCESS_ID.HasValue ?
+                new ObjectParameter("P_PROCESS_ID", p_PROCESS_ID) :
+                new ObjectParameter("P_PROCESS_ID", typeof(decimal));
+    
+            var p_FATHER_TASK_IDParameter = p_FATHER_TASK_ID.HasValue ?
+                new ObjectParameter("P_FATHER_TASK_ID", p_FATHER_TASK_ID) :
+                new ObjectParameter("P_FATHER_TASK_ID", typeof(decimal));
+    
+            var p_TASK_STATUS_CODEParameter = p_TASK_STATUS_CODE != null ?
+                new ObjectParameter("P_TASK_STATUS_CODE", p_TASK_STATUS_CODE) :
+                new ObjectParameter("P_TASK_STATUS_CODE", typeof(string));
+    
+            var p_STARTParameter = p_START.HasValue ?
+                new ObjectParameter("P_START", p_START) :
+                new ObjectParameter("P_START", typeof(System.DateTime));
+    
+            var p_ENDParameter = p_END.HasValue ?
+                new ObjectParameter("P_END", p_END) :
+                new ObjectParameter("P_END", typeof(System.DateTime));
+    
+            var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
+                new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
+                new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
+    
+            var p_USER_IDParameter = p_USER_ID.HasValue ?
+                new ObjectParameter("P_USER_ID", p_USER_ID) :
+                new ObjectParameter("P_USER_ID", typeof(decimal));
+    
+            var p_ASSING_IDParameter = p_ASSING_ID.HasValue ?
+                new ObjectParameter("P_ASSING_ID", p_ASSING_ID) :
+                new ObjectParameter("P_ASSING_ID", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TASK_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_PROCESS_IDParameter, p_FATHER_TASK_IDParameter, p_TASK_STATUS_CODEParameter, p_STARTParameter, p_ENDParameter, p_CREATE_ATParameter, p_USER_IDParameter, p_ASSING_IDParameter);
+        }
+    
         public virtual int SP_TEMPLATE_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_USER_ID)
         {
             var p_NAMEParameter = p_NAME != null ?
@@ -187,7 +281,7 @@ namespace api_.DB
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_CREATE_ATParameter, p_STATEParameter, p_USER_IDParameter);
         }
     
-        public virtual int SP_TEMPLATE_TASK_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<decimal> p_TEMPLATE_ID, string p_TASK_STATUS_CODE, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_USER_ID)
+        public virtual int SP_TEMPLATE_TASK_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<decimal> p_TEMPLATE_ID, string p_TASK_STATUS_CODE, Nullable<System.DateTime> p_CREATE_AT, Nullable<System.DateTime> p_END_DATE, Nullable<decimal> p_USER_ID)
         {
             var p_NAMEParameter = p_NAME != null ?
                 new ObjectParameter("P_NAME", p_NAME) :
@@ -209,11 +303,15 @@ namespace api_.DB
                 new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
                 new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
     
+            var p_END_DATEParameter = p_END_DATE.HasValue ?
+                new ObjectParameter("P_END_DATE", p_END_DATE) :
+                new ObjectParameter("P_END_DATE", typeof(System.DateTime));
+    
             var p_USER_IDParameter = p_USER_ID.HasValue ?
                 new ObjectParameter("P_USER_ID", p_USER_ID) :
                 new ObjectParameter("P_USER_ID", typeof(decimal));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_TASK_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_TEMPLATE_IDParameter, p_TASK_STATUS_CODEParameter, p_CREATE_ATParameter, p_USER_IDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TEMPLATE_TASK_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_TEMPLATE_IDParameter, p_TASK_STATUS_CODEParameter, p_CREATE_ATParameter, p_END_DATEParameter, p_USER_IDParameter);
         }
     
         public virtual int SP_TEMPLATE_UPDATE(Nullable<decimal> p_ID, string p_NAME, string p_DESCRIPTION, Nullable<System.DateTime> p_UPDATED_AT, Nullable<decimal> p_STATE, Nullable<decimal> p_USER_ID)
@@ -400,76 +498,6 @@ namespace api_.DB
                 new ObjectParameter("P_STATE", typeof(decimal));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_UPDATE_WITH_PASSWORD", p_IDParameter, p_NAMEParameter, p_EMAILParameter, p_PASSWORDParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_UPDATED_ATParameter, p_STATEParameter);
-        }
-    
-        public virtual int SP_FILE_INSERT(Nullable<decimal> p_TASK_ID, string p_NAME, string p_URL, string p_PATH, Nullable<System.DateTime> p_CREATED_AT)
-        {
-            var p_TASK_IDParameter = p_TASK_ID.HasValue ?
-                new ObjectParameter("P_TASK_ID", p_TASK_ID) :
-                new ObjectParameter("P_TASK_ID", typeof(decimal));
-    
-            var p_NAMEParameter = p_NAME != null ?
-                new ObjectParameter("P_NAME", p_NAME) :
-                new ObjectParameter("P_NAME", typeof(string));
-    
-            var p_URLParameter = p_URL != null ?
-                new ObjectParameter("P_URL", p_URL) :
-                new ObjectParameter("P_URL", typeof(string));
-    
-            var p_PATHParameter = p_PATH != null ?
-                new ObjectParameter("P_PATH", p_PATH) :
-                new ObjectParameter("P_PATH", typeof(string));
-    
-            var p_CREATED_ATParameter = p_CREATED_AT.HasValue ?
-                new ObjectParameter("P_CREATED_AT", p_CREATED_AT) :
-                new ObjectParameter("P_CREATED_AT", typeof(System.DateTime));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_FILE_INSERT", p_TASK_IDParameter, p_NAMEParameter, p_URLParameter, p_PATHParameter, p_CREATED_ATParameter);
-        }
-    
-        public virtual int SP_TASK_INSERT(string p_NAME, string p_DESCRIPTION, Nullable<decimal> p_PROCESS_ID, Nullable<decimal> p_FATHER_TASK_ID, string p_TASK_STATUS_CODE, Nullable<System.DateTime> p_START, Nullable<System.DateTime> p_END, Nullable<System.DateTime> p_CREATE_AT, Nullable<decimal> p_USER_ID, Nullable<decimal> p_ASSING_ID)
-        {
-            var p_NAMEParameter = p_NAME != null ?
-                new ObjectParameter("P_NAME", p_NAME) :
-                new ObjectParameter("P_NAME", typeof(string));
-    
-            var p_DESCRIPTIONParameter = p_DESCRIPTION != null ?
-                new ObjectParameter("P_DESCRIPTION", p_DESCRIPTION) :
-                new ObjectParameter("P_DESCRIPTION", typeof(string));
-    
-            var p_PROCESS_IDParameter = p_PROCESS_ID.HasValue ?
-                new ObjectParameter("P_PROCESS_ID", p_PROCESS_ID) :
-                new ObjectParameter("P_PROCESS_ID", typeof(decimal));
-    
-            var p_FATHER_TASK_IDParameter = p_FATHER_TASK_ID.HasValue ?
-                new ObjectParameter("P_FATHER_TASK_ID", p_FATHER_TASK_ID) :
-                new ObjectParameter("P_FATHER_TASK_ID", typeof(decimal));
-    
-            var p_TASK_STATUS_CODEParameter = p_TASK_STATUS_CODE != null ?
-                new ObjectParameter("P_TASK_STATUS_CODE", p_TASK_STATUS_CODE) :
-                new ObjectParameter("P_TASK_STATUS_CODE", typeof(string));
-    
-            var p_STARTParameter = p_START.HasValue ?
-                new ObjectParameter("P_START", p_START) :
-                new ObjectParameter("P_START", typeof(System.DateTime));
-    
-            var p_ENDParameter = p_END.HasValue ?
-                new ObjectParameter("P_END", p_END) :
-                new ObjectParameter("P_END", typeof(System.DateTime));
-    
-            var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
-                new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
-                new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
-    
-            var p_USER_IDParameter = p_USER_ID.HasValue ?
-                new ObjectParameter("P_USER_ID", p_USER_ID) :
-                new ObjectParameter("P_USER_ID", typeof(decimal));
-    
-            var p_ASSING_IDParameter = p_ASSING_ID.HasValue ?
-                new ObjectParameter("P_ASSING_ID", p_ASSING_ID) :
-                new ObjectParameter("P_ASSING_ID", typeof(decimal));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_TASK_INSERT", p_NAMEParameter, p_DESCRIPTIONParameter, p_PROCESS_IDParameter, p_FATHER_TASK_IDParameter, p_TASK_STATUS_CODEParameter, p_STARTParameter, p_ENDParameter, p_CREATE_ATParameter, p_USER_IDParameter, p_ASSING_IDParameter);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace api_.Models {
         public User creatorUser { get; set; }
         public DateTime? dateStart { get; set; }
         public DateTime? dateEnd { get; set; }
+        public String sDateStart { get; set; }
+        public String sDateEnd { get; set; }
         public String taskStatusId { get; set; }
         public TaskStatus taskStatus { get; set; }
         public DateTime? createdAt { get; set; }

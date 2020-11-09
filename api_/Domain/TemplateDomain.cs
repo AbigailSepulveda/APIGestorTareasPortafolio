@@ -36,6 +36,28 @@ namespace api_.Domain {
                 throw e;
             }
         }
+        public static List<Template> fetchAllByUnit(decimal unit_id) {
+            try {
+                List<Template> list = new List<Template>();
+
+                var mTemplates = TemplateDAL.fetchAllByUnit(unit_id).ToList();
+
+                foreach (templates item in mTemplates) {
+                    Template model = new Template();
+                    model.id = long.Parse(item.id + "");
+                    model.name = item.name;
+                    model.description = item.description;
+                    model.n_tasks = TemplateTaskDAL.fetchAllByTemplateId(item.id).Count();
+                    model.userId = long.Parse(item.user_id + "");
+                    list.Add(model);
+                }
+
+                return list;
+
+            } catch (Exception e) {
+                throw e;
+            }
+        }
 
         /**
          * Método para crear un nuevo registro
@@ -49,10 +71,37 @@ namespace api_.Domain {
                         name = x.name,
                         description = x.description,
                         task_status_code = x.task_status_code,
+                        end_date = x.endDate,
                     }).ToList();
 
                     TemplateDAL.insert(Template.name, Template.description, list, Template.userId);
                 }
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static void start(decimal id, decimal userId) {
+            try {
+
+                var template = TemplateDAL.fetchAll().Where(x => x.id == id).FirstOrDefault();
+                var tasks = TemplateTaskDAL.fetchAll().Where(x => x.template_id == template.id).ToList();
+
+                decimal processId = ProcessDAL.insert(template.name, template.description, DateTime.Now, userId);
+
+                foreach (templates_tasks ts in tasks) {
+                    tasks model = new tasks();
+                    model.name = ts.name;
+                    model.description = ts.description;
+                    model.date_end = ts.end_date;
+                    model.task_status = ts.task_status_code;
+                    model.creator_user_id = decimal.Parse(userId + "");
+                    model.process_id = processId;
+
+                    TaskDAL.createTask(model);
+                }
+
+
             } catch (Exception e) {
                 throw e;
             }

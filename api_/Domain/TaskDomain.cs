@@ -63,6 +63,79 @@ namespace api_.Domain {
             }
         }
 
+        public static List<Task> getAssignTasksByUser(decimal id) {
+            try {
+                List<Task> list = new List<Task>();
+                var dTasks = TaskDAL.getAssignTasksByUser(id).ToList();
+
+                foreach (tasks item in dTasks) {
+                    Task task = new Task();
+                    task.id = long.Parse(item.id + "");
+                    task.name = item.name;
+                    task.description = item.description;
+                    task.dateEnd = item.date_end;
+                    task.sDateEnd = ((DateTime)item.date_end).ToString("dd/MM/yyyy").Replace("-", "/");
+
+                    if (item.process_id != null) {
+                        var process = ProcessDAL.getById(Decimal.Parse(item.process_id + ""));
+                        Process dProcess = new Process();
+                        dProcess.name = process.name;
+                        dProcess.description = process.description;
+                        dProcess.id = long.Parse(process.id + "");
+                        task.process = dProcess;
+                    }
+
+                    var listFiles = DocumentDAL.fetchAllByTaskId(long.Parse(item.id + "")).Select(x => new Document() {
+                        id = long.Parse(x.id + ""),
+                        name = x.name,
+                        url = x.url,
+                        path = x.path,
+                        task_id = x.task_id
+                    }).ToList();
+
+                    task.documents = listFiles;
+                    list.Add(task);
+                }
+
+
+                return list;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static List<Task> fetchByUnit(decimal id) {
+            try {
+
+                return TaskDAL.fetchAllByUnit(id).Select(x => new Task {
+                    id = long.Parse(x.id + ""),
+                    name = x.name,
+                    description = x.description,
+                    dateStart = x.date_start,
+                    dateEnd = x.date_end,
+                    taskStatusId = x.task_status
+                }).ToList();
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static void refuseTask(decimal id, String message) {
+            try {
+                TaskDAL.refuseTask(id,message);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static void acceptTask(decimal id) {
+            try {
+                TaskDAL.acceptTask(id);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         public static void createTask(Task task) {
             try {
                 if (TaskDAL.exists(task.name)) {
@@ -72,19 +145,18 @@ namespace api_.Domain {
                     tasks.name = task.name;
                     tasks.description = task.description;
 
-                    if (task.processId != -1) {
+                    if (task.processId != -1 && task.processId != 0) {
                         tasks.process_id = int.Parse(task.processId + "");
                     }
-                    if (task.assingId != -1) {
+                    if (task.assingId != -1 && task.processId != 0) {
                         tasks.assing_id = int.Parse(task.assingId + "");
                     }
-                    if (task.fatherTaksId != -1) {
+                    if (task.fatherTaksId != -1 && task.processId != 0) {
                         tasks.father_taks_id = int.Parse(task.fatherTaksId + "");
                     }
                     tasks.task_status = task.taskStatusId;
                     tasks.creator_user_id = task.creatorUserId;
                     tasks.created_at = DateTime.Now;
-                    tasks.date_start = task.dateStart;
                     tasks.date_end = task.dateEnd;
 
 
