@@ -33,6 +33,16 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getTasksByProcessId")]
+        [HttpGet]
+        public HttpResponseMessage getTasksByProcessId(decimal id) {
+            try {
+                return response(HttpStatusCode.OK, true, "ready", TaskDomain.getTasksByProcessId(id));
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
         [Route("getByTaskId")]
         [HttpGet]
         public HttpResponseMessage getByTaskId(decimal id) {
@@ -72,7 +82,7 @@ namespace api_.Controllers {
         [HttpPost]
         public HttpResponseMessage refuseTask(Task task) {
             try {
-                TaskDomain.refuseTask(task.id, task.description);
+                TaskDomain.refuseTask(task.id, task.description, task.creatorUserId);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);
@@ -83,7 +93,7 @@ namespace api_.Controllers {
         [HttpPost]
         public HttpResponseMessage acceptTask(Task task) {
             try {
-                TaskDomain.acceptTask(task.id);
+                TaskDomain.acceptTask(task.id, task.creatorUserId);
                 return response(HttpStatusCode.OK, true, "ready");
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);

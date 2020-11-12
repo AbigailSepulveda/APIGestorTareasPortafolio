@@ -532,6 +532,12 @@
           <Parameter Name="P_PATH" Type="varchar2" Mode="In" />
           <Parameter Name="P_CREATED_AT" Type="timestamp" Mode="In" />
         </Function>
+        <Function Name="SP_LOG_TASK" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_TASK_ID" Type="number" Mode="In" />
+          <Parameter Name="P_USER_ID" Type="number" Mode="In" />
+          <Parameter Name="P_CREATE_AT" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATUS_CODE" Type="varchar2" Mode="In" />
+        </Function>
         <Function Name="SP_PROCESS_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
           <Parameter Name="P_NAME" Type="varchar2" Mode="In" />
           <Parameter Name="P_DESCRIPTION" Type="varchar2" Mode="In" />
@@ -994,6 +1000,12 @@
             <End Role="units" EntitySet="units" />
             <End Role="users" EntitySet="users" />
           </AssociationSet>
+          <FunctionImport Name="SP_LOG_TASK">
+            <Parameter Name="P_TASK_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_USER_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATUS_CODE" Mode="In" Type="String" />
+          </FunctionImport>
           </EntityContainer>
         <EntityType Name="alerts">
           <Key>
@@ -1800,6 +1812,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="SP_LOG_TASK" FunctionName="db_model.Store.SP_LOG_TASK" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

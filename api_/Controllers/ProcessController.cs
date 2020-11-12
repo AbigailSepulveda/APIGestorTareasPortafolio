@@ -15,9 +15,19 @@ namespace api_.Controllers {
 
         [Route("getProcessByUnit")]
         [HttpGet]
-        public HttpResponseMessage getAll(decimal unit_id) {
+        public HttpResponseMessage getProcessByUnit(decimal unit_id) {
             try {
                 return response(HttpStatusCode.OK, true, "ready", ProcessDomain.fetchAllByUnit(unit_id));
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
+        [Route("getBacklogByUnit")]
+        [HttpGet]
+        public HttpResponseMessage getBacklogByUnit(decimal unit_id) {
+            try {
+                return response(HttpStatusCode.OK, true, "ready", ProcessDomain.getBackLogByUnit(unit_id));
             } catch (Exception e) {
                 return response(HttpStatusCode.OK, false, e);
             }

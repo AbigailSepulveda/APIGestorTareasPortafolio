@@ -22,5 +22,6 @@ namespace api_.Models {
         public Document document { get; set; }
         public List<Document> documents { get; set; }
         public long assingId { get; set; }
+        public int alert { get; set; }
     }
 }

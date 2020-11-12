@@ -22,10 +22,20 @@ namespace api_.Domain {
                     task = new Task();
                     task.id = long.Parse(result.id + "");
                     task.name = result.name;
-                    task.assingId = long.Parse(result.assing_id + "");
+                    if (result.assing_id != null) {
+                        task.assingId = long.Parse(result.assing_id + "");
+                    } else {
+                        task.assingId = -1;
+                    }
                     task.description = result.description;
                     task.dateStart = result.date_start;
+                    if (task.dateStart != null) {
+                        task.sDateStart = ((DateTime)task.dateStart).ToString("dd/MM/yyyy").Replace("-", "/");
+                    }
                     task.dateEnd = result.date_end;
+                    if (task.dateEnd != null) {
+                        task.sDateEnd = ((DateTime)task.dateEnd).ToString("dd/MM/yyyy").Replace("-", "/");
+                    }
                     task.creatorUserId = long.Parse(result.creator_user_id + "");
                     task.name = result.name;
                     task.taskStatusId = result.task_status;
@@ -104,6 +114,50 @@ namespace api_.Domain {
             }
         }
 
+        public static List<Task> getTasksByProcessId(decimal id) {
+            try {
+                List<Task> list = new List<Task>();
+                var dTasks = TaskDAL.getTasksByProcessId(id).ToList();
+
+                foreach (tasks item in dTasks) {
+                    Task task = new Task();
+                    task.id = long.Parse(item.id + "");
+                    task.name = item.name;
+                    task.description = item.description;
+                    task.dateEnd = item.date_end;
+                    task.sDateEnd = ((DateTime)item.date_end).ToString("dd/MM/yyyy").Replace("-", "/");
+
+                    if (item.process_id != null) {
+                        var process = ProcessDAL.getById(Decimal.Parse(item.process_id + ""));
+                        Process dProcess = new Process();
+                        dProcess.name = process.name;
+                        dProcess.description = process.description;
+                        dProcess.id = long.Parse(process.id + "");
+                        task.process = dProcess;
+                    }
+
+                    var listFiles = DocumentDAL.fetchAllByTaskId(long.Parse(item.id + "")).Select(x => new Document() {
+                        id = long.Parse(x.id + ""),
+                        name = x.name,
+                        url = x.url,
+                        path = x.path,
+                        task_id = x.task_id
+                    }).ToList();
+
+                    task.documents = listFiles;
+
+                    task.alert = 0;
+
+                    list.Add(task);
+                }
+
+
+                return list;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         public static List<Task> fetchByUnit(decimal id) {
             try {
 
@@ -120,17 +174,17 @@ namespace api_.Domain {
             }
         }
 
-        public static void refuseTask(decimal id, String message) {
+        public static void refuseTask(decimal id, String message, decimal userId) {
             try {
-                TaskDAL.refuseTask(id,message);
+                TaskDAL.refuseTask(id, message, userId);
             } catch (Exception e) {
                 throw e;
             }
         }
 
-        public static void acceptTask(decimal id) {
+        public static void acceptTask(decimal id, decimal userId) {
             try {
-                TaskDAL.acceptTask(id);
+                TaskDAL.acceptTask(id, userId);
             } catch (Exception e) {
                 throw e;
             }

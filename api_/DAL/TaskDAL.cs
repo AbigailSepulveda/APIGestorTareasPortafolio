@@ -46,6 +46,15 @@ namespace api_.DAL {
                 }
             }
         }
+        public static List<tasks> getTasksByProcessId(decimal id) {
+            using (var conn = new db_entities()) {
+                try {
+                    return conn.tasks.Where(x => x.process_id == id).ToList();
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
         public static List<tasks> fetchAllByUnit(decimal id) {
             using (var conn = new db_entities()) {
                 try {
@@ -93,7 +102,7 @@ namespace api_.DAL {
                         logTask.task_id = result.id;
                         logTask.task_status_code = tasks.task_status;
                         conn.log_task.Add(logTask);
-                        conn.SaveChanges();
+                        //conn.SaveChanges();
 
                         return result.id;
                     } else {
@@ -105,7 +114,7 @@ namespace api_.DAL {
             }
         }
 
-        public static void refuseTask(decimal id, String message) {
+        public static void refuseTask(decimal id, String message, decimal userId) {
             using (var conn = new db_entities()) {
                 try {
                     var task = conn.tasks.Where(x => x.id == id).FirstOrDefault();
@@ -121,12 +130,9 @@ namespace api_.DAL {
                     alert.state = 0;
                     conn.alerts.Add(alert);
 
-                    log_task logTask = new log_task();
-                    logTask.task_id = id;
-                    logTask.task_status_code = "3";
-                    conn.log_task.Add(logTask);
-
                     conn.SaveChanges();
+
+                    conn.SP_LOG_TASK(id, userId, DateTime.Now, "3");
 
                 } catch (Exception e) {
                     throw e;
@@ -134,7 +140,7 @@ namespace api_.DAL {
             }
         }
 
-        public static void acceptTask(decimal id) {
+        public static void acceptTask(decimal id, decimal userId) {
             using (var conn = new db_entities()) {
                 try {
                     var task = conn.tasks.Where(x => x.id == id).FirstOrDefault();
@@ -142,12 +148,9 @@ namespace api_.DAL {
                     if (task != null) {
                         task.task_status = "4";
                     }
-
-                    log_task logTask = new log_task();
-                    logTask.task_id = id;
-                    logTask.task_status_code = "4";
-                    conn.log_task.Add(logTask);
                     conn.SaveChanges();
+
+                    conn.SP_LOG_TASK(id, userId, DateTime.Now, "4");
 
                 } catch (Exception e) {
                     throw e;

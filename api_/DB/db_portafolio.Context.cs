@@ -499,5 +499,26 @@ namespace api_.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_USER_UPDATE_WITH_PASSWORD", p_IDParameter, p_NAMEParameter, p_EMAILParameter, p_PASSWORDParameter, p_ROL_IDParameter, p_UNIT_IDParameter, p_UPDATED_ATParameter, p_STATEParameter);
         }
+    
+        public virtual int SP_LOG_TASK(Nullable<decimal> p_TASK_ID, Nullable<decimal> p_USER_ID, Nullable<System.DateTime> p_CREATE_AT, string p_STATUS_CODE)
+        {
+            var p_TASK_IDParameter = p_TASK_ID.HasValue ?
+                new ObjectParameter("P_TASK_ID", p_TASK_ID) :
+                new ObjectParameter("P_TASK_ID", typeof(decimal));
+    
+            var p_USER_IDParameter = p_USER_ID.HasValue ?
+                new ObjectParameter("P_USER_ID", p_USER_ID) :
+                new ObjectParameter("P_USER_ID", typeof(decimal));
+    
+            var p_CREATE_ATParameter = p_CREATE_AT.HasValue ?
+                new ObjectParameter("P_CREATE_AT", p_CREATE_AT) :
+                new ObjectParameter("P_CREATE_AT", typeof(System.DateTime));
+    
+            var p_STATUS_CODEParameter = p_STATUS_CODE != null ?
+                new ObjectParameter("P_STATUS_CODE", p_STATUS_CODE) :
+                new ObjectParameter("P_STATUS_CODE", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_LOG_TASK", p_TASK_IDParameter, p_USER_IDParameter, p_CREATE_ATParameter, p_STATUS_CODEParameter);
+        }
     }
 }
