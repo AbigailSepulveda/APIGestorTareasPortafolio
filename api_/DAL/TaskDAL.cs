@@ -46,6 +46,15 @@ namespace api_.DAL {
                 }
             }
         }
+        public static List<tasks> getCreationTasksByUser(decimal id) {
+            using (var conn = new db_entities()) {
+                try {
+                    return conn.tasks.Where(x => x.creator_user_id == id).ToList();
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
         public static List<tasks> getTasksByProcessId(decimal id) {
             using (var conn = new db_entities()) {
                 try {
@@ -123,14 +132,9 @@ namespace api_.DAL {
                         task.task_status = "3";
                     }
 
-                    alerts alert = new alerts();
-                    alert.message = message;
-                    alert.task_id = id;
-                    alert.created_at = DateTime.Now;
-                    alert.state = 0;
-                    conn.alerts.Add(alert);
-
                     conn.SaveChanges();
+
+                    conn.SP_ALERT_INSERT(message, id, DateTime.Now, 0);
 
                     conn.SP_LOG_TASK(id, userId, DateTime.Now, "3");
 
@@ -152,6 +156,30 @@ namespace api_.DAL {
 
                     conn.SP_LOG_TASK(id, userId, DateTime.Now, "4");
 
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
+
+        public static void assignTask(decimal id, decimal userId) {
+            using (var conn = new db_entities()) {
+                try {
+                    var task = conn.tasks.Where(x => x.id == id).FirstOrDefault();
+
+                    if (task != null) {
+                        task.task_status = "0";
+                        task.assing_id = userId;
+                    }
+                    conn.SaveChanges();
+
+                    conn.SP_LOG_TASK(id, userId, DateTime.Now, "0");
+
+                    var alert = conn.alerts.Where(x => x.task_id == id && x.state == 0).FirstOrDefault();
+
+                    if (alert != null) {
+                        conn.SP_ALERT_UPDATE(alert.id, alert.message, id, DateTime.Now, 1);
+                    }
                 } catch (Exception e) {
                     throw e;
                 }

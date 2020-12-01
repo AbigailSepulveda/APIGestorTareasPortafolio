@@ -176,6 +176,7 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="DAL\ConfigTrafficLightDAL.cs" />
+    <Compile Include="DAL\AlertDAL.cs" />
     <Compile Include="DAL\ProcessDAL.cs" />
     <Compile Include="DAL\DocumentDAL.cs" />
     <Compile Include="DAL\TemplateTaskDAL.cs" />
@@ -274,6 +275,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Alert.cs" />
     <Compile Include="Models\ConfigTrafficLight.cs" />
     <Compile Include="Models\Enterprise.cs" />
     <Compile Include="Models\Module.cs" />

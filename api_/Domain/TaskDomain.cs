@@ -114,6 +114,56 @@ namespace api_.Domain {
             }
         }
 
+        public static List<Alert> getRejectionTasksByCreator(decimal id) {
+            try {
+                List<Alert> list = new List<Alert>();
+                var dTasks = TaskDAL.getCreationTasksByUser(id).ToList();
+
+                foreach (tasks item in dTasks) {
+                    var dAlert = AlertDAL.fetchByTaskId(long.Parse(item.id + ""));
+                    if (dAlert != null) {
+                        Task task = new Task();
+                        task.id = long.Parse(item.id + "");
+                        task.name = item.name;
+                        task.description = item.description;
+                        task.dateEnd = item.date_end;
+                        task.sDateEnd = ((DateTime)item.date_end).ToString("dd/MM/yyyy").Replace("-", "/");
+
+                        if (item.process_id != null) {
+                            var process = ProcessDAL.getById(Decimal.Parse(item.process_id + ""));
+                            Process dProcess = new Process();
+                            dProcess.name = process.name;
+                            dProcess.description = process.description;
+                            dProcess.id = long.Parse(process.id + "");
+                            task.process = dProcess;
+                        }
+
+                        var user = UserDAL.fetchAll().Where(x => x.id == item.assing_id).FirstOrDefault();
+
+                        User mUser = new User();
+                        mUser.id = long.Parse(user.id + "");
+                        mUser.name = user.name;
+
+                        task.creatorUser = mUser;
+
+                        Alert alert = new Alert();
+
+                        alert.id = dAlert.id;
+                        alert.message = dAlert.message;
+                        alert.state = int.Parse(dAlert.state + "");
+                        alert.task = task;
+
+                        list.Add(alert);
+                    }
+                }
+
+
+                return list;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         public static List<Task> getTasksByProcessId(decimal id) {
             try {
                 List<Task> list = new List<Task>();
@@ -185,6 +235,14 @@ namespace api_.Domain {
         public static void acceptTask(decimal id, decimal userId) {
             try {
                 TaskDAL.acceptTask(id, userId);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static void assignTask(decimal id, decimal userId) {
+            try {
+                TaskDAL.assignTask(id, userId);
             } catch (Exception e) {
                 throw e;
             }

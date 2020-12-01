@@ -507,6 +507,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="SP_ALERT_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_MESSAGE" Type="varchar2" Mode="In" />
+          <Parameter Name="P_TASK_ID" Type="number" Mode="In" />
+          <Parameter Name="P_CREATED" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
+        <Function Name="SP_ALERT_UPDATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
+          <Parameter Name="P_ID" Type="number" Mode="In" />
+          <Parameter Name="P_MESSAGE" Type="varchar2" Mode="In" />
+          <Parameter Name="P_TASK_ID" Type="number" Mode="In" />
+          <Parameter Name="P_UPDATED" Type="timestamp" Mode="In" />
+          <Parameter Name="P_STATE" Type="number" Mode="In" />
+        </Function>
         <Function Name="SP_CONFIG_TRAFFIC_LIGHTS_UPDATE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="PORTAFOLIO">
           <Parameter Name="P_ID" Type="number" Mode="In" />
           <Parameter Name="P_GREEN" Type="number" Mode="In" />
@@ -1005,6 +1018,19 @@
             <Parameter Name="P_USER_ID" Mode="In" Type="Decimal" />
             <Parameter Name="P_CREATE_AT" Mode="In" Type="DateTime" />
             <Parameter Name="P_STATUS_CODE" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ALERT_INSERT">
+            <Parameter Name="P_MESSAGE" Mode="In" Type="String" />
+            <Parameter Name="P_TASK_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_CREATED" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ALERT_UPDATE">
+            <Parameter Name="P_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_MESSAGE" Mode="In" Type="String" />
+            <Parameter Name="P_TASK_ID" Mode="In" Type="Decimal" />
+            <Parameter Name="P_UPDATED" Mode="In" Type="DateTime" />
+            <Parameter Name="P_STATE" Mode="In" Type="Decimal" />
           </FunctionImport>
           </EntityContainer>
         <EntityType Name="alerts">
@@ -1813,6 +1839,8 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="SP_LOG_TASK" FunctionName="db_model.Store.SP_LOG_TASK" />
+          <FunctionImportMapping FunctionImportName="SP_ALERT_INSERT" FunctionName="db_model.Store.SP_ALERT_INSERT" />
+          <FunctionImportMapping FunctionImportName="SP_ALERT_UPDATE" FunctionName="db_model.Store.SP_ALERT_UPDATE" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -520,5 +520,51 @@ namespace api_.DB
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_LOG_TASK", p_TASK_IDParameter, p_USER_IDParameter, p_CREATE_ATParameter, p_STATUS_CODEParameter);
         }
+    
+        public virtual int SP_ALERT_INSERT(string p_MESSAGE, Nullable<decimal> p_TASK_ID, Nullable<System.DateTime> p_CREATED, Nullable<decimal> p_STATE)
+        {
+            var p_MESSAGEParameter = p_MESSAGE != null ?
+                new ObjectParameter("P_MESSAGE", p_MESSAGE) :
+                new ObjectParameter("P_MESSAGE", typeof(string));
+    
+            var p_TASK_IDParameter = p_TASK_ID.HasValue ?
+                new ObjectParameter("P_TASK_ID", p_TASK_ID) :
+                new ObjectParameter("P_TASK_ID", typeof(decimal));
+    
+            var p_CREATEDParameter = p_CREATED.HasValue ?
+                new ObjectParameter("P_CREATED", p_CREATED) :
+                new ObjectParameter("P_CREATED", typeof(System.DateTime));
+    
+            var p_STATEParameter = p_STATE.HasValue ?
+                new ObjectParameter("P_STATE", p_STATE) :
+                new ObjectParameter("P_STATE", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ALERT_INSERT", p_MESSAGEParameter, p_TASK_IDParameter, p_CREATEDParameter, p_STATEParameter);
+        }
+    
+        public virtual int SP_ALERT_UPDATE(Nullable<decimal> p_ID, string p_MESSAGE, Nullable<decimal> p_TASK_ID, Nullable<System.DateTime> p_UPDATED, Nullable<decimal> p_STATE)
+        {
+            var p_IDParameter = p_ID.HasValue ?
+                new ObjectParameter("P_ID", p_ID) :
+                new ObjectParameter("P_ID", typeof(decimal));
+    
+            var p_MESSAGEParameter = p_MESSAGE != null ?
+                new ObjectParameter("P_MESSAGE", p_MESSAGE) :
+                new ObjectParameter("P_MESSAGE", typeof(string));
+    
+            var p_TASK_IDParameter = p_TASK_ID.HasValue ?
+                new ObjectParameter("P_TASK_ID", p_TASK_ID) :
+                new ObjectParameter("P_TASK_ID", typeof(decimal));
+    
+            var p_UPDATEDParameter = p_UPDATED.HasValue ?
+                new ObjectParameter("P_UPDATED", p_UPDATED) :
+                new ObjectParameter("P_UPDATED", typeof(System.DateTime));
+    
+            var p_STATEParameter = p_STATE.HasValue ?
+                new ObjectParameter("P_STATE", p_STATE) :
+                new ObjectParameter("P_STATE", typeof(decimal));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("SP_ALERT_UPDATE", p_IDParameter, p_MESSAGEParameter, p_TASK_IDParameter, p_UPDATEDParameter, p_STATEParameter);
+        }
     }
 }

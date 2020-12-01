@@ -33,6 +33,27 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getRejectionTasksByCreator")]
+        [HttpGet]
+        public HttpResponseMessage getRejectionTasksByCreator(decimal id) {
+            try {
+                return response(HttpStatusCode.OK, true, "ready", TaskDomain.getRejectionTasksByCreator(id));
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
+        [Route("assignTask")]
+        [HttpPost]
+        public HttpResponseMessage assignTask(Task task) {
+            try {
+                TaskDomain.assignTask(task.id, task.assingId);
+                return response(HttpStatusCode.OK, true, "ready");
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
         [Route("getTasksByProcessId")]
         [HttpGet]
         public HttpResponseMessage getTasksByProcessId(decimal id) {
