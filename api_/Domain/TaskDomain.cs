@@ -247,6 +247,13 @@ namespace api_.Domain {
                 throw e;
             }
         }
+        public static void editTask(decimal id, String state, decimal userId) {
+            try {
+                TaskDAL.editTask(id, state, userId);
+            } catch (Exception e) {
+                throw e;
+            }
+        }
 
         public static void createTask(Task task) {
             try {

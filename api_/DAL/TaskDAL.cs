@@ -185,5 +185,27 @@ namespace api_.DAL {
                 }
             }
         }
+
+        public static void editTask(decimal id, String state, decimal userId) {
+            using (var conn = new db_entities()) {
+                try {
+                    var task = conn.tasks.Where(x => x.id == id).FirstOrDefault();
+
+                    if (task != null) {
+                        task.task_status = state;
+                        task.assing_id = userId;
+                        if (state == "4") {
+                            task.date_start = DateTime.Now;
+                        }
+                    }
+
+                    conn.SaveChanges();
+
+                    conn.SP_LOG_TASK(id, userId, DateTime.Now, state);
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
     }
 }

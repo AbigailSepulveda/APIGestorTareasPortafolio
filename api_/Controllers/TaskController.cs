@@ -120,5 +120,16 @@ namespace api_.Controllers {
                 return response(HttpStatusCode.OK, false, e);
             }
         }
+
+        [Route("editTask")]
+        [HttpPost]
+        public HttpResponseMessage editTask(Task task) {
+            try {
+                TaskDomain.editTask(task.id, task.taskStatusId, task.assingId);
+                return response(HttpStatusCode.OK, true, "ready");
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
     }
 }
