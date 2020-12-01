@@ -57,17 +57,22 @@ namespace api_.Domain {
 
                     var pendingTask = 0;
                     var readyTask = 0;
+                    var workingTask = 0;
                     if (dListTasks != null) {
                         foreach (tasks tarea in dListTasks) {
                             if (tarea.task_status == "2") {
                                 readyTask = readyTask + 1;
                             }
-                            if (tarea.task_status == "0" || tarea.task_status == "1" || tarea.task_status == "4") {
+                            if (tarea.task_status == "0" || tarea.task_status == "1") {
                                 pendingTask = pendingTask + 1;
+                            }
+                            if (tarea.task_status == "4") {
+                                workingTask = workingTask + 1;
                             }
                         }
                     }
 
+                    model.task_working = workingTask;
                     model.task_peding = pendingTask;
                     model.task_ready = readyTask;
 
