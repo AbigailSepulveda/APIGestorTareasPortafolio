@@ -88,6 +88,48 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getTaskRed")]
+        [HttpGet]
+        public HttpResponseMessage getTaskRed(string unit_id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.getTaskRed(decimal.Parse(unit_id)));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
+        [Route("getTaskYellow")]
+        [HttpGet]
+        public HttpResponseMessage getTaskYellow(string unit_id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.getTaskYellow(decimal.Parse(unit_id)));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
+        [Route("getTaskGreen")]
+        [HttpGet]
+        public HttpResponseMessage getTaskGreen(string unit_id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.getTaskGreen(decimal.Parse(unit_id)));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
         [Route("createTask")]
         [HttpPost]
         public HttpResponseMessage createTask(Task task) {

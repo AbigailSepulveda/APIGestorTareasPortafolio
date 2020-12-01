@@ -224,6 +224,153 @@ namespace api_.Domain {
             }
         }
 
+        public static List<Task> getTaskRed(decimal id) {
+            try {
+
+                var list = TaskDAL.fetchAllByUnit(id).Select(x => new Task {
+                    id = long.Parse(x.id + ""),
+                    name = x.name,
+                    description = x.description,
+                    dateStart = x.date_start,
+                    dateEnd = x.date_end,
+                    taskStatusId = x.task_status
+                }).ToList();
+
+                List<Task> newList = new List<Task>();
+                var alert = ConfigTrafficLightDAL.fetch();
+                foreach (Task task in list) {
+                    var end = (DateTime)task.dateEnd;
+                    var now = DateTime.Now;
+                    var date = -(Math.Round((now - end).TotalDays));
+
+                    if (date <= double.Parse(alert.red + "") && task.taskStatusId != "2" && task.taskStatusId != "3") {
+                        User dUser = new User();
+                        if (task.assingId != 0) {
+                            var user = UserDAL.fetchAll().Where(x => x.id == task.assingId).FirstOrDefault();
+                            if (user != null) {
+                                dUser.id = long.Parse(user.id + "");
+                                dUser.name = user.name;
+                            } else {
+                                dUser.name = "Sin Asignar";
+                            }
+                        } else {
+                            dUser.name = "Sin Asignar";
+                        }
+                        task.creatorUser = dUser;
+
+                        if (task.dateEnd != null) {
+                            task.sDateEnd = ((DateTime)task.dateEnd).ToString("dd/MM/yyyy").Replace("-", "/");
+                        }
+
+
+                        newList.Add(task);
+                    }
+                }
+                return newList;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static List<Task> getTaskYellow(decimal id) {
+            try {
+
+                var list = TaskDAL.fetchAllByUnit(id).Select(x => new Task {
+                    id = long.Parse(x.id + ""),
+                    name = x.name,
+                    description = x.description,
+                    dateStart = x.date_start,
+                    dateEnd = x.date_end,
+                    taskStatusId = x.task_status
+                }).ToList();
+
+                List<Task> newList = new List<Task>();
+                var alert = ConfigTrafficLightDAL.fetch();
+                foreach (Task task in list) {
+                    var end = (DateTime)task.dateEnd;
+                    var now = DateTime.Now;
+                    var date = -(Math.Round((now - end).TotalDays));
+
+                    if (date > double.Parse(alert.red + "")
+                        && date <= double.Parse(alert.yellow + "")
+                        && task.taskStatusId != "2" && task.taskStatusId != "3") {
+                        User dUser = new User();
+                        if (task.assingId != 0) {
+                            var user = UserDAL.fetchAll().Where(x => x.id == task.assingId).FirstOrDefault();
+                            if (user != null) {
+                                dUser.id = long.Parse(user.id + "");
+                                dUser.name = user.name;
+                            } else {
+                                dUser.name = "Sin Asignar";
+                            }
+                        } else {
+                            dUser.name = "Sin Asignar";
+                        }
+                        task.creatorUser = dUser;
+
+                        if (task.dateEnd != null) {
+                            task.sDateEnd = ((DateTime)task.dateEnd).ToString("dd/MM/yyyy").Replace("-", "/");
+                        }
+
+
+                        newList.Add(task);
+                    }
+                }
+                return newList;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static List<Task> getTaskGreen(decimal id) {
+            try {
+
+                var list = TaskDAL.fetchAllByUnit(id).Select(x => new Task {
+                    id = long.Parse(x.id + ""),
+                    name = x.name,
+                    description = x.description,
+                    dateStart = x.date_start,
+                    dateEnd = x.date_end,
+                    taskStatusId = x.task_status
+                }).ToList();
+
+                List<Task> newList = new List<Task>();
+                var alert = ConfigTrafficLightDAL.fetch();
+                foreach (Task task in list) {
+                    var end = (DateTime)task.dateEnd;
+                    var now = DateTime.Now;
+                    var date = - (Math.Round((now - end).TotalDays));
+
+                    if (date > double.Parse(alert.green + "")
+                        && task.taskStatusId != "2" && task.taskStatusId != "3") {
+                        User dUser = new User();
+                        if (task.assingId != 0) {
+                            var user = UserDAL.fetchAll().Where(x => x.id == task.assingId).FirstOrDefault();
+                            if (user != null) {
+                                dUser.id = long.Parse(user.id + "");
+                                dUser.name = user.name;
+                            } else {
+                                dUser.name = "Sin Asignar";
+                            }
+                        } else {
+                            dUser.name = "Sin Asignar";
+                        }
+                        task.creatorUser = dUser;
+
+                        if (task.dateEnd != null) {
+                            task.sDateEnd = ((DateTime)task.dateEnd).ToString("dd/MM/yyyy").Replace("-", "/");
+                        }
+
+
+                        newList.Add(task);
+                    }
+                }
+                return newList;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         public static void refuseTask(decimal id, String message, decimal userId) {
             try {
                 TaskDAL.refuseTask(id, message, userId);
