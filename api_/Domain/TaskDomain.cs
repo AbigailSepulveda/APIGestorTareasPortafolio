@@ -2,6 +2,7 @@
 using api_.DB;
 using api_.Exceptions;
 using api_.Models;
+using api_.Models.response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -224,6 +225,183 @@ namespace api_.Domain {
             }
         }
 
+        public static ListReportAlerts getReportAlerts(decimal id) {
+            try {
+
+                var list = TaskDAL.fetchAllByUser(id).Select(x => new Task {
+                    id = long.Parse(x.id + ""),
+                    name = x.name,
+                    description = x.description,
+                    dateStart = x.date_start,
+                    dateEnd = x.date_end,
+                    taskStatusId = x.task_status
+                }).ToList();
+
+                ListReportAlerts response = new ListReportAlerts();
+
+                var alert = ConfigTrafficLightDAL.fetch();
+
+                int red = 0;
+                int yellow = 0;
+                int green = 0;
+
+                foreach (Task task in list) {
+                    var end = (DateTime)task.dateEnd;
+                    var now = DateTime.Now;
+                    var date = -(Math.Round((now - end).TotalDays));
+
+                    if (date <= double.Parse(alert.red + "") && task.taskStatusId != "2" && task.taskStatusId != "3") {
+                        red++;
+                    } else
+                    if (date > double.Parse(alert.red + "")
+                        && date <= double.Parse(alert.yellow + "")
+                        && task.taskStatusId != "2" && task.taskStatusId != "3") {
+                        yellow++;
+                    } else if (date > double.Parse(alert.green + "")
+                        && task.taskStatusId != "2" && task.taskStatusId != "3") {
+                        green++;
+                    }
+                }
+
+                response.red = red;
+                response.yellow = yellow;
+                response.green = green;
+                return response;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static ListReportTask getReportTask(decimal id) {
+            try {
+
+                var list = TaskDAL.fetchAllByUser(id).Select(x => new Task {
+                    id = long.Parse(x.id + ""),
+                    name = x.name,
+                    description = x.description,
+                    dateStart = x.date_start,
+                    dateEnd = x.date_end,
+                    taskStatusId = x.task_status
+                }).ToList();
+
+                ListReportTask response = new ListReportTask();
+
+                int ready = 0;
+                int working = 0;
+                int pending = 0;
+
+                foreach (Task task in list) {
+                    if (task.taskStatusId == "0") {
+                        pending++;
+                    } else if (task.taskStatusId == "2") {
+                        ready++;
+                    } else if (task.taskStatusId == "4") {
+                        working++;
+                    }
+                }
+
+                response.tasks = list.Count();
+                response.done = ready;
+                response.working = working;
+                response.pending = pending;
+                return response;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static List<ListReportProcess> getReportProcess(decimal id) {
+            try {
+                List<ListReportProcess> processList = new List<ListReportProcess>();
+
+                var dProcess = ProcessDAL.fetchAllByUnit(id);
+
+                foreach (process p in dProcess) {
+                    ListReportProcess response = new ListReportProcess();
+                    response.processId = int.Parse(p.id + "");
+                    response.processName = p.name;
+
+                    var list = TaskDAL.fetchByProcess(p.id).Select(x => new Task {
+                        id = long.Parse(x.id + ""),
+                        name = x.name,
+                        taskStatusId= x.task_status,
+                    }).ToList();
+
+                    response.taskList = list;
+
+                    int ready = 0;
+                    int working = 0;
+                    int pending = 0;
+
+                    foreach (Task task in list) {
+                        if (task.taskStatusId == "0") {
+                            pending++;
+                        } else if (task.taskStatusId == "2") {
+                            ready++;
+                        } else if (task.taskStatusId == "4") {
+                            working++;
+                        }
+                    }
+
+                    response.tasks = list.Count();
+                    response.done = ready;
+                    response.working = working;
+                    response.pending = pending;
+
+                    processList.Add(response);
+                }
+
+                return processList;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
+        public static List<ListReportUnit> getReportUnit(decimal id) {
+            try {
+                List<ListReportUnit> processList = new List<ListReportUnit>();
+
+                var dUnit = UnitDAL.fetchAll().Where(x => x.id == id).FirstOrDefault();
+
+                var dUnits = UnitDAL.fetchAll().Where(x => x.enterprise_id == dUnit.enterprise_id).ToList();
+
+                foreach (units u in dUnits) {
+                    ListReportUnit response = new ListReportUnit();
+                    response.unitId = int.Parse(u.id+"");
+                    response.unitName = u.name;
+
+                    var list = TaskDAL.fetchAllByUnit(u.id).Select(x => new Task {
+                        id = long.Parse(x.id + ""),
+                        name = x.name,
+                        taskStatusId = x.task_status,
+                    }).ToList();
+
+                    int ready = 0;
+                    int working = 0;
+                    int pending = 0;
+
+                    foreach (Task task in list) {
+                        if (task.taskStatusId == "0") {
+                            pending++;
+                        } else if (task.taskStatusId == "2") {
+                            ready++;
+                        } else if (task.taskStatusId == "4") {
+                            working++;
+                        }
+                    }
+
+                    response.done = ready;
+                    response.working = working;
+                    response.pending = pending;
+
+                    processList.Add(response);
+                }
+                return processList;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         public static List<Task> getTaskRed(decimal id) {
             try {
 
@@ -339,7 +517,7 @@ namespace api_.Domain {
                 foreach (Task task in list) {
                     var end = (DateTime)task.dateEnd;
                     var now = DateTime.Now;
-                    var date = - (Math.Round((now - end).TotalDays));
+                    var date = -(Math.Round((now - end).TotalDays));
 
                     if (date > double.Parse(alert.green + "")
                         && task.taskStatusId != "2" && task.taskStatusId != "3") {

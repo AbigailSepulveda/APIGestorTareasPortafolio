@@ -280,6 +280,10 @@
     <Compile Include="Models\Enterprise.cs" />
     <Compile Include="Models\Module.cs" />
     <Compile Include="Models\request\CreateProcessRequest.cs" />
+    <Compile Include="Models\response\ListReportUnit.cs" />
+    <Compile Include="Models\response\ListReportProcess.cs" />
+    <Compile Include="Models\response\ListReportTask.cs" />
+    <Compile Include="Models\response\ListReportAlerts.cs" />
     <Compile Include="Models\response\ListProcessResponse.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Process.cs" />

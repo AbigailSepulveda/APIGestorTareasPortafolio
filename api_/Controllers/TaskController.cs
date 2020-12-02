@@ -88,6 +88,62 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getReportAlerts")]
+        [HttpGet]
+        public HttpResponseMessage getReportAlerts(decimal id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.getReportAlerts(id));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
+        [Route("getReportTask")]
+        [HttpGet]
+        public HttpResponseMessage getReportTask(decimal id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.getReportTask(id));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
+        [Route("getReportProcess")]
+        [HttpGet]
+        public HttpResponseMessage getReportProcess(decimal id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.getReportProcess(id));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
+        [Route("getReportUnit")]
+        [HttpGet]
+        public HttpResponseMessage getReportUnit(decimal id) {
+            if (checkToken(Request)) {
+                try {
+                    return response(HttpStatusCode.OK, true, "ready", TaskDomain.getReportUnit(id));
+                } catch (Exception e) {
+                    return response(HttpStatusCode.InternalServerError, false, e);
+                }
+            } else {
+                return response(HttpStatusCode.Unauthorized, false, "invalid token");
+            }
+        }
+
         [Route("getTaskRed")]
         [HttpGet]
         public HttpResponseMessage getTaskRed(string unit_id) {
