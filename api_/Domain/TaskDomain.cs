@@ -249,8 +249,7 @@ namespace api_.Domain {
 
                     if (date <= double.Parse(alert.red + "")) {
                         task.alert = 1;
-                    } else if (date > double.Parse(alert.red + "")
-                        && date <= double.Parse(alert.yellow + "")) {
+                    } else if (date <= double.Parse(alert.yellow + "")) {
                         task.alert = 2;
                     } else if (date > double.Parse(alert.green + "")) {
                         task.alert = 3;
@@ -310,8 +309,7 @@ namespace api_.Domain {
                     if (date <= double.Parse(alert.red + "") && task.taskStatusId != "2" && task.taskStatusId != "3") {
                         red++;
                     } else
-                    if (date > double.Parse(alert.red + "")
-                        && date <= double.Parse(alert.yellow + "")
+                    if (date <= double.Parse(alert.yellow + "")
                         && task.taskStatusId != "2" && task.taskStatusId != "3") {
                         yellow++;
                     } else if (date > double.Parse(alert.green + "")
@@ -526,8 +524,7 @@ namespace api_.Domain {
                     var now = DateTime.Now;
                     var date = -(Math.Round((now - end).TotalDays));
 
-                    if (date > double.Parse(alert.red + "")
-                        && date <= double.Parse(alert.yellow + "")
+                    if (date <= double.Parse(alert.yellow + "")
                         && task.taskStatusId != "2" && task.taskStatusId != "3") {
                         User dUser = new User();
                         if (task.assingId != 0) {
@@ -576,7 +573,7 @@ namespace api_.Domain {
                     var now = DateTime.Now;
                     var date = -(Math.Round((now - end).TotalDays));
 
-                    if (date > double.Parse(alert.green + "")
+                    if (date > double.Parse(alert.yellow + "")
                         && task.taskStatusId != "2" && task.taskStatusId != "3") {
                         User dUser = new User();
                         if (task.assingId != 0) {
