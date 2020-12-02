@@ -55,6 +55,15 @@ namespace api_.DAL {
                 }
             }
         }
+        public static List<tasks> getTasksByUser(decimal id) {
+            using (var conn = new db_entities()) {
+                try {
+                    return conn.tasks.Where(x => x.assing_id == id).ToList();
+                } catch (Exception e) {
+                    throw e;
+                }
+            }
+        }
         public static List<tasks> getTasksByProcessId(decimal id) {
             using (var conn = new db_entities()) {
                 try {

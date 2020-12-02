@@ -209,6 +209,63 @@ namespace api_.Domain {
             }
         }
 
+        public static List<Task> getTasksByUserId(decimal id) {
+            try {
+                List<Task> list = new List<Task>();
+                var dTasks = TaskDAL.getTasksByUser(id);
+
+                foreach (tasks item in dTasks) {
+                    Task task = new Task();
+                    task.id = long.Parse(item.id + "");
+                    task.name = item.name;
+                    task.description = item.description;
+                    task.dateEnd = item.date_end;
+                    task.sDateEnd = ((DateTime)item.date_end).ToString("dd/MM/yyyy").Replace("-", "/");
+
+                    if (item.process_id != null) {
+                        var process = ProcessDAL.getById(Decimal.Parse(item.process_id + ""));
+                        Process dProcess = new Process();
+                        dProcess.name = process.name;
+                        dProcess.description = process.description;
+                        dProcess.id = long.Parse(process.id + "");
+                        task.process = dProcess;
+                    }
+
+                    var listFiles = DocumentDAL.fetchAllByTaskId(long.Parse(item.id + "")).Select(x => new Document() {
+                        id = long.Parse(x.id + ""),
+                        name = x.name,
+                        url = x.url,
+                        path = x.path,
+                        task_id = x.task_id
+                    }).ToList();
+
+                    task.documents = listFiles;
+
+                    var alert = ConfigTrafficLightDAL.fetch();
+
+                    var end = (DateTime)item.date_end;
+                    var now = DateTime.Now;
+                    var date = -(Math.Round((now - end).TotalDays));
+
+                    if (date <= double.Parse(alert.red + "")) {
+                        task.alert = 1;
+                    } else if (date > double.Parse(alert.red + "")
+                        && date <= double.Parse(alert.yellow + "")) {
+                        task.alert = 2;
+                    } else if (date > double.Parse(alert.green + "")) {
+                        task.alert = 3;
+                    }
+
+                    list.Add(task);
+                }
+
+
+                return list;
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+
         public static List<Task> fetchByUnit(decimal id) {
             try {
 
@@ -324,7 +381,7 @@ namespace api_.Domain {
                     var list = TaskDAL.fetchByProcess(p.id).Select(x => new Task {
                         id = long.Parse(x.id + ""),
                         name = x.name,
-                        taskStatusId= x.task_status,
+                        taskStatusId = x.task_status,
                     }).ToList();
 
                     response.taskList = list;
@@ -367,7 +424,7 @@ namespace api_.Domain {
 
                 foreach (units u in dUnits) {
                     ListReportUnit response = new ListReportUnit();
-                    response.unitId = int.Parse(u.id+"");
+                    response.unitId = int.Parse(u.id + "");
                     response.unitName = u.name;
 
                     var list = TaskDAL.fetchAllByUnit(u.id).Select(x => new Task {

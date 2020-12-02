@@ -64,6 +64,16 @@ namespace api_.Controllers {
             }
         }
 
+        [Route("getTasksByUserId")]
+        [HttpGet]
+        public HttpResponseMessage getTasksByUserId(decimal id) {
+            try {
+                return response(HttpStatusCode.OK, true, "ready", TaskDomain.getTasksByUserId(id));
+            } catch (Exception e) {
+                return response(HttpStatusCode.OK, false, e);
+            }
+        }
+
         [Route("getByTaskId")]
         [HttpGet]
         public HttpResponseMessage getByTaskId(decimal id) {
